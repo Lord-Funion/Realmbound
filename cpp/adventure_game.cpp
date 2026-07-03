@@ -410,6 +410,7 @@ const std::vector<std::string>& scene_order() {
         "underkeep",
         "clocktower",
         "well",
+        "hundred_day_road",
         "dragon_gate",
         "final_battle",
     };
@@ -433,6 +434,7 @@ const std::unordered_map<std::string, std::string>& scene_titles() {
         {"underkeep", "Underkeep"},
         {"clocktower", "Clocktower"},
         {"well", "Old Well"},
+        {"hundred_day_road", "The Hundred-Day Road"},
         {"dragon_gate", "Dragon Gate"},
         {"final_battle", "Final Battle"},
         {FINISHED_SCENE, "Finished Game"},
@@ -492,8 +494,114 @@ const std::unordered_map<std::string, Monster>& monsters() {
         {"crown wraith", {110, 30, 10, {"royal glare", "cold decree", "crown toss"}}},
         {"lord dreadbiscuit", {180, 36, 10, {"crumb storm", "butter curse", "ego blast"}}},
         {"realmbound dragon", {260, 42, 10, {"starfire breath", "crownquake", "eclipse wingstorm", "ancient claw"}}},
+        {"ashfall pilgrim", {96, 23, 10, {"ember staff", "cinder prayer", "ash cloak"}}},
+        {"lantern jackal", {100, 24, 10, {"lamp bite", "oil slick", "howling flare"}}},
+        {"mossbound knight", {108, 25, 10, {"root shield", "green blade", "helmet sprout"}}},
+        {"mirror moth", {92, 26, 10, {"glass wing", "reflection flash", "powder dazzle"}}},
+        {"ember librarian", {112, 27, 10, {"burning bookmark", "shushing flame", "index curse"}}},
+        {"fogbank siren", {116, 28, 10, {"mist song", "harbor pull", "whiteout whisper"}}},
+        {"tin crown bandit", {120, 29, 10, {"fake decree", "coin knife", "royal shove"}}},
+        {"hollow beekeeper", {124, 30, 10, {"wax veil", "hive rattle", "stinger rain"}}},
+        {"moonlit scarecrow", {128, 31, 10, {"straw jab", "moon grin", "field hex"}}},
+        {"iron acorn brute", {136, 32, 10, {"oak punch", "iron shell", "squirrel panic"}}},
+        {"velvet gargoyle", {132, 33, 10, {"soft stone claw", "curtain dive", "balcony crash"}}},
+        {"clockwork eel", {118, 34, 10, {"gear bite", "static coil", "spring lash"}}},
+        {"glacier monk", {140, 35, 10, {"frozen palm", "silent avalanche", "ice mantra"}}},
+        {"briar drummer", {126, 36, 10, {"thorn rhythm", "snare root", "wild tempo"}}},
+        {"marble banshee", {144, 37, 10, {"statue shriek", "grave echo", "cracked aria"}}},
+        {"thunder yak", {150, 38, 10, {"storm charge", "horn thunder", "cloud stomp"}}},
+        {"paper lantern fiend", {122, 39, 10, {"paper flame", "festival fright", "string snare"}}},
+        {"copper wyvern", {156, 40, 10, {"coin-scale rake", "green fire", "roof snatch"}}},
+        {"old road revenant", {148, 41, 10, {"mile marker", "dust hand", "forgotten shortcut"}}},
+        {"saltwater specter", {152, 42, 10, {"brine wave", "anchor chill", "shipbell howl"}}},
+        {"orchard mimic", {160, 43, 10, {"apple snap", "branch disguise", "basket bite"}}},
+        {"candlewax duelist", {146, 44, 10, {"wick rapier", "melting feint", "flame salute"}}},
+        {"rune-tusk boar", {168, 45, 10, {"glyph gore", "mud ward", "tusk spell"}}},
+        {"midnight tax collector", {154, 46, 10, {"late fee", "receipt lash", "audit glare"}}},
+        {"feathered basilisk", {162, 47, 10, {"plume stare", "stone chirp", "talon flash"}}},
+        {"broken compass spirit", {158, 48, 10, {"northless pull", "needle spin", "lost road"}}},
+        {"jewel wasp swarm", {170, 49, 10, {"ruby sting", "buzzing crown", "gem cloud"}}},
+        {"singing stump", {166, 50, 10, {"root chorus", "bark note", "splinter solo"}}},
+        {"blackglass panther", {176, 51, 10, {"mirror pounce", "shadow claw", "glass growl"}}},
+        {"sunken bell knight", {184, 52, 10, {"drowned chime", "rusted lance", "undertow step"}}},
+        {"nettle witchling", {172, 53, 10, {"sting charm", "green hex", "thorn wink"}}},
+        {"storm cellar troll", {190, 54, 10, {"barrel throw", "basement boom", "storm burp"}}},
+        {"silver mask rogue", {178, 55, 10, {"mask flash", "quiet dagger", "vanishing bow"}}},
+        {"bonewheel racer", {182, 56, 10, {"wheel crash", "rib spoke", "graveyard lap"}}},
+        {"spellbook leech", {188, 57, 10, {"page drain", "ink bite", "borrowed spell"}}},
+        {"cloud anvil giant", {208, 58, 10, {"sky hammer", "anvil drop", "forge thunder"}}},
+        {"porcelain hydra", {202, 59, 10, {"china fang", "teacup roar", "seven saucers"}}},
+        {"scarecrow magistrate", {194, 60, 10, {"field warrant", "straw verdict", "gavel stick"}}},
+        {"obsidian choir", {210, 61, 10, {"black hymn", "shard harmony", "echo cut"}}},
+        {"frostroot colossus", {224, 62, 10, {"winter branch", "rootquake", "snow crown"}}},
+        {"honeycomb horror", {198, 63, 10, {"sticky maw", "hexagon swarm", "golden sting"}}},
+        {"brass cathedral rook", {218, 64, 10, {"bell tower dive", "brass wing", "sanctuary slam"}}},
+        {"map-eating serpent", {206, 65, 10, {"cartography bite", "folded coil", "legend swallow"}}},
+        {"velvet thunderlord", {230, 66, 10, {"royal thunder", "soft lightning", "storm decree"}}},
+        {"eclipse ferryman", {220, 67, 10, {"black oar", "river shadow", "fare curse"}}},
+        {"crownless lion", {236, 68, 10, {"mane flare", "throne roar", "claw decree"}}},
+        {"dream ash phantom", {214, 69, 10, {"sleep cinder", "nightmare veil", "pillow grave"}}},
+        {"seven-key jailer", {242, 70, 10, {"keyring crush", "cell door slam", "warden glare"}}},
+        {"realmquake titan", {260, 72, 10, {"continent stomp", "fault line", "mountain backhand"}}},
+        {"calendar dragon", {280, 74, 10, {"lost month", "deadline flame", "year-end wing"}}},
     };
     return data;
+}
+
+const std::vector<std::string>& long_road_enemies() {
+    static const std::vector<std::string> enemies = {
+        "ashfall pilgrim",
+        "lantern jackal",
+        "mossbound knight",
+        "mirror moth",
+        "ember librarian",
+        "fogbank siren",
+        "tin crown bandit",
+        "hollow beekeeper",
+        "moonlit scarecrow",
+        "iron acorn brute",
+        "velvet gargoyle",
+        "clockwork eel",
+        "glacier monk",
+        "briar drummer",
+        "marble banshee",
+        "thunder yak",
+        "paper lantern fiend",
+        "copper wyvern",
+        "old road revenant",
+        "saltwater specter",
+        "orchard mimic",
+        "candlewax duelist",
+        "rune-tusk boar",
+        "midnight tax collector",
+        "feathered basilisk",
+        "broken compass spirit",
+        "jewel wasp swarm",
+        "singing stump",
+        "blackglass panther",
+        "sunken bell knight",
+        "nettle witchling",
+        "storm cellar troll",
+        "silver mask rogue",
+        "bonewheel racer",
+        "spellbook leech",
+        "cloud anvil giant",
+        "porcelain hydra",
+        "scarecrow magistrate",
+        "obsidian choir",
+        "frostroot colossus",
+        "honeycomb horror",
+        "brass cathedral rook",
+        "map-eating serpent",
+        "velvet thunderlord",
+        "eclipse ferryman",
+        "crownless lion",
+        "dream ash phantom",
+        "seven-key jailer",
+        "realmquake titan",
+        "calendar dragon",
+    };
+    return enemies;
 }
 
 const std::vector<std::string>& loot_drops() {
@@ -2194,6 +2302,63 @@ void underkeep_scene(Player& player) {
     }
 }
 
+void hundred_day_road_scene(Player& player, std::unordered_map<std::string, bool>& shop_stock) {
+    static const std::vector<std::string> chapter_names = {
+        "Ash Month",
+        "Lantern Month",
+        "Mirror Month",
+        "Storm Month",
+        "Crownless Month",
+    };
+
+    say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.");
+    say("Mileposts rise out of the dirt one after another, each carved with a different warning.");
+    say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'");
+    say("The Dragon Gate waits at the far end, but the road refuses to be skipped.");
+    run_shop(player, shop_stock, true, true);
+
+    const auto& enemies = long_road_enemies();
+    for (std::size_t offset = 0; offset < enemies.size(); ++offset) {
+        int index = static_cast<int>(offset) + 1;
+        const std::string& enemy = enemies[offset];
+
+        if (offset % 10 == 0) {
+            say("\n=== " + chapter_names[offset / 10] + " ===");
+            say("The milepost reads " + std::to_string(index) + "/50. The road insists another month has begun.");
+            if (index > 1) {
+                offer_potions(player);
+                run_shop(player, shop_stock, true, true);
+            }
+        }
+
+        if (fight_or_run("\nEnemy " + std::to_string(index) + "/50: A " + scene_title(enemy) + " blocks the road. Fight or run? ") == "run") {
+            say("\nYou turn back. The road folds behind you like a map in a bad mood.");
+            game_over(player);
+        }
+
+        spell_fight(enemy, player);
+
+        if (index % 5 == 0) {
+            int health_gain = std::min(30, player.health_max - player.health);
+            int mana_gain = std::min(20, player.mana_max - player.mana);
+            player.health += health_gain;
+            player.mana += mana_gain;
+            say("\nA roadside shrine gives you just enough rest to keep going. Health +" +
+                std::to_string(health_gain) + ", mana +" + std::to_string(mana_gain) + ".");
+            offer_potions(player);
+        }
+    }
+
+    if (!has_item(player, "Hundred-Day Road Seal")) {
+        player.backpack.push_back("Hundred-Day Road Seal");
+    }
+    player.money += 150;
+    say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.");
+    say("You also pry " + money_text(150) + " from a stone donation box labeled 'hero maintenance'.");
+    say("Behind you, the road is full of footprints. Ahead, the Dragon Gate finally stops pretending to be close.");
+    run_shop(player, shop_stock, true, true);
+}
+
 void dragon_gate_scene(Player& player, std::unordered_map<std::string, bool>& shop_stock) {
     say("\nThe Silver Key fits a gate made of old dragon scales.");
     say("Next to it, two blacksmiths argue over whether anvils count as musical instruments.");
@@ -2451,6 +2616,8 @@ void run_scene(const std::string& scene_id, Player& player, std::unordered_map<s
         clocktower_scene(player, shop_stock);
     } else if (scene_id == "well") {
         well_scene(player);
+    } else if (scene_id == "hundred_day_road") {
+        hundred_day_road_scene(player, shop_stock);
     } else if (scene_id == "dragon_gate") {
         dragon_gate_scene(player, shop_stock);
     } else if (scene_id == "final_battle") {
