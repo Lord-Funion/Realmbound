@@ -412,6 +412,7 @@ const std::unordered_map<std::string, Monster>& monsters() {
         {"shadow knight", {60, 20, 25, {"gloom blade", "helmet glare", "dramatic cape slap"}}},
         {"crystal dragon", {80, 24, 35, {"sparkle breath", "tail sweep", "gemstone sneeze"}}},
         {"lord dreadbiscuit", {95, 26, 50, {"cookie crumble", "royal tantrum", "butter curse"}}},
+        {"realmbound dragon", {150, 31, 90, {"starfire breath", "crownquake", "eclipse wingstorm", "ancient claw"}}},
     };
     return data;
 }
@@ -2003,13 +2004,28 @@ void dragon_gate_scene(Player& player, std::unordered_map<std::string, bool>& sh
 void final_battle_scene(Player& player) {
     say("\nBeyond the gate stands Lord Dreadbiscuit, wearing a crown far too small for his ego.");
     say("\"At last,\" he says, \"someone has come to challenge my mildly inconvenient darkness.\"");
-    if (fight_or_run("\nDo you fight Lord Dreadbiscuit or run? ") == "run") {
-        say("\nYou turn around and step on a cursed cookie crumb.");
+    say("Then the crown cracks like thunder and the whole castle tilts toward the sky.");
+    say("A dragon larger than the tower unfolds from the storm clouds, each scale glowing like a sealed doorway.");
+    say("Lord Dreadbiscuit points up and whispers, \"Technically, I was only renting the throne.\"");
+
+    if (has_item(player, "Dragon Scale Chip")) {
+        player.health = std::min(player.health_max, player.health + 40);
+        player.mana = std::min(player.mana_max, player.mana + 35);
+        say("\nThe Dragon Scale Chip burns white-hot and shields you in old realmfire. Health: " +
+            std::to_string(player.health) + "/" + std::to_string(player.health_max) +
+            " Mana: " + std::to_string(player.mana) + "/" + std::to_string(player.mana_max) + ".");
+    }
+
+    say("\nThe Realmbound Dragon lands on the ruined throne and blocks out every star.");
+    if (fight_or_run("\nDo you fight the Realmbound Dragon or run? ") == "run") {
+        say("\nYou run. The dragon inhales once, and the road behind you becomes a memory.");
         game_over(player);
     }
 
-    spell_fight("lord dreadbiscuit", player);
-    say("\nLord Dreadbiscuit wobbles, crumbles, and apologizes to everyone he has inconvenienced.");
+    spell_fight("realmbound dragon", player);
+    say("\nThe Realmbound Dragon crashes across the throne mountain and folds its wings around the broken castle.");
+    say("Its final roar turns into sunrise. Every locked road in the realm opens at once.");
+    say("Lord Dreadbiscuit crawls from under a biscuit-shaped shield and immediately retires from evil.");
     say("Rumblerod appears from behind a curtain and insists he was helping invisibly the whole time.");
     print_stats(player);
 }
@@ -2222,7 +2238,7 @@ void run_scene(const std::string& scene_id, Player& player, std::unordered_map<s
 }
 
 void finish_game(const Player& player) {
-    say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.");
+    say("\nThe Realmbound Dragon's storm breaks apart into silver sparks above the saved realm.");
     say("\nGood job, " + player.name + ", you have completed the game.");
     say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.");
     std::cout << "\n" << term::bright_yellow("THE END") << "\nYou finished with " << money_text(player.money) << ".\n";

@@ -692,7 +692,7 @@ def _extra_fight(player, monster_name, intro, run_text):
 
 
 def _finish_game(player):
-    say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.", "scene")
+    say("\nThe Realmbound Dragon's storm breaks apart into silver sparks above the saved realm.", "scene")
     say(f"\nGood job, {player.get('name', 'Adventurer')}, you have completed the game.", "scene")
     say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.", "scene")
     say(f"\nTHE END\nYou finished with {money_text(player['money'])}.", "none")
@@ -1416,13 +1416,29 @@ def dragon_gate_scene(player, shop_stock):
 
 
 def final_battle_scene(player):
-    """Face the villain and complete the adventure."""
+    """Face the dragon that has been holding the realm together by force."""
     say("\nBeyond the gate stands Lord Dreadbiscuit, wearing a crown far too small for his ego.")
     say('"At last," he says, "someone has come to challenge my mildly inconvenient darkness."', "beat")
-    if fight_or_run("\nDo you fight Lord Dreadbiscuit or run? ") == "run":
-        say("\nYou turn around and step on a cursed cookie crumb.", "beat")
+    say("Then the crown cracks like thunder and the whole castle tilts toward the sky.", "beat")
+    say("A dragon larger than the tower unfolds from the storm clouds, each scale glowing like a sealed doorway.")
+    say('Lord Dreadbiscuit points up and whispers, "Technically, I was only renting the throne."', "beat")
+
+    if "Dragon Scale Chip" in player["backpack"]:
+        player["health"] = min(player["healthMax"], player["health"] + 40)
+        player["mana"] = min(player["manaMax"], player["mana"] + 35)
+        say(
+            "\nThe Dragon Scale Chip burns white-hot and shields you in old realmfire. "
+            f"Health: {player['health']}/{player['healthMax']} Mana: {player['mana']}/{player['manaMax']}.",
+            "beat",
+        )
+
+    say("\nThe Realmbound Dragon lands on the ruined throne and blocks out every star.")
+    if fight_or_run("\nDo you fight the Realmbound Dragon or run? ") == "run":
+        say("\nYou run. The dragon inhales once, and the road behind you becomes a memory.", "beat")
         game_over(player)
 
-    spell_fight("lord dreadbiscuit", player)
-    say("\nLord Dreadbiscuit wobbles, crumbles, and apologizes to everyone he has inconvenienced.")
+    spell_fight("realmbound dragon", player)
+    say("\nThe Realmbound Dragon crashes across the throne mountain and folds its wings around the broken castle.")
+    say("Its final roar turns into sunrise. Every locked road in the realm opens at once.", "beat")
+    say("Lord Dreadbiscuit crawls from under a biscuit-shaped shield and immediately retires from evil.")
     say("Rumblerod appears from behind a curtain and insists he was helping invisibly the whole time.", "beat")

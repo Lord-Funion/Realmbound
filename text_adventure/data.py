@@ -203,6 +203,11 @@ MONSTERS = {
         "damage": 36,
         "attacks": ["crumb storm", "butter curse", "ego blast"],
     },
+    "realmbound dragon": {
+        "health": 260,
+        "damage": 42,
+        "attacks": ["starfire breath", "crownquake", "eclipse wingstorm", "ancient claw"],
+    },
 }
 
 

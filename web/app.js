@@ -192,6 +192,12 @@
       reward: 50,
       attacks: ["cookie crumble", "royal tantrum", "butter curse"],
     },
+    "realmbound dragon": {
+      health: 150,
+      damage: 31,
+      reward: 90,
+      attacks: ["starfire breath", "crownquake", "eclipse wingstorm", "ancient claw"],
+    },
   };
 
   const LOOT_DROPS = [
@@ -1520,7 +1526,7 @@
     }
 
     finishGame(player) {
-      this.say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.");
+      this.say("\nThe Realmbound Dragon's storm breaks apart into silver sparks above the saved realm.");
       this.say(`\nGood job, ${player.name || "Adventurer"}, you have completed the game.`);
       this.say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.");
       this.sayParts(["\nTHE END\nYou finished with ", ...this.moneyParts(player.money), "."]);
@@ -2041,13 +2047,26 @@
     async finalBattleScene(player) {
       this.say("\nBeyond the gate stands Lord Dreadbiscuit, wearing a crown far too small for his ego.");
       this.say('"At last," he says, "someone has come to challenge my mildly inconvenient darkness."');
-      if (await this.fightOrRun("\nDo you fight Lord Dreadbiscuit or run? ") === "run") {
-        this.say("\nYou turn around and step on a cursed cookie crumb.");
+      this.say("Then the crown cracks like thunder and the whole castle tilts toward the sky.");
+      this.say("A dragon larger than the tower unfolds from the storm clouds, each scale glowing like a sealed doorway.");
+      this.say('Lord Dreadbiscuit points up and whispers, "Technically, I was only renting the throne."');
+
+      if (player.backpack.includes("Dragon Scale Chip")) {
+        player.health = Math.min(player.healthMax, player.health + 40);
+        player.mana = Math.min(player.manaMax, player.mana + 35);
+        this.say(`\nThe Dragon Scale Chip burns white-hot and shields you in old realmfire. Health: ${player.health}/${player.healthMax} Mana: ${player.mana}/${player.manaMax}.`);
+      }
+
+      this.say("\nThe Realmbound Dragon lands on the ruined throne and blocks out every star.");
+      if (await this.fightOrRun("\nDo you fight the Realmbound Dragon or run? ") === "run") {
+        this.say("\nYou run. The dragon inhales once, and the road behind you becomes a memory.");
         this.gameOver(player);
       }
 
-      await this.spellFight("lord dreadbiscuit", player);
-      this.say("\nLord Dreadbiscuit wobbles, crumbles, and apologizes to everyone he has inconvenienced.");
+      await this.spellFight("realmbound dragon", player);
+      this.say("\nThe Realmbound Dragon crashes across the throne mountain and folds its wings around the broken castle.");
+      this.say("Its final roar turns into sunrise. Every locked road in the realm opens at once.");
+      this.say("Lord Dreadbiscuit crawls from under a biscuit-shaped shield and immediately retires from evil.");
       this.say("Rumblerod appears from behind a curtain and insists he was helping invisibly the whole time.");
       this.printStats(player);
     }
