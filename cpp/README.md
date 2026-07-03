@@ -1,6 +1,6 @@
-# Adventure Game C++ Port
+# Realmbound C++ Port
 
-This is a console C++17 port of the current Adventure Game story, combat,
+This is a console C++17 port of the current Realmbound story, combat,
 shops, potion flow, and web-style Game Over menu.
 
 Cloud saves are not included in the C++ port because the current Python and web

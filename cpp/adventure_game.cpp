@@ -2447,7 +2447,7 @@ void run_scene(const std::string& scene_id, Player& player, std::unordered_map<s
 void finish_game(const Player& player) {
     say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.");
     say("\nGood job, " + player.name + ", you have completed the game.");
-    say("\nCredits: Adventure Game by Thunderstruck7 and Lord Funion.");
+    say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.");
     std::cout << "\n" << term::bright_yellow("THE END") << "\nYou finished with " << money_text(player.money) << ".\n";
     autosave_tick();
 }
@@ -2525,7 +2525,7 @@ std::string restart_menu() {
 
 State main_menu_state() {
     while (true) {
-        std::string choice = choose_menu("Adventure Game", {
+        std::string choice = choose_menu("Realmbound", {
             {"1", "New Game", "new", "", {"new", "start"}},
             {"2", "Load Game", "load", "", {"load", "continue"}},
             {"3", "Cloud Saves", "cloud", "", {"cloud", "online", "sync"}},
