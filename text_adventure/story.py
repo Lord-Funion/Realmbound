@@ -694,7 +694,7 @@ def _extra_fight(player, monster_name, intro, run_text):
 def _finish_game(player):
     say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.", "scene")
     say(f"\nGood job, {player.get('name', 'Adventurer')}, you have completed the game.", "scene")
-    say("\nCredits: Adventure Game by Thunderstruck7 and Lord Funion.", "scene")
+    say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.", "scene")
     say(f"\nTHE END\nYou finished with {money_text(player['money'])}.", "none")
     _postgame_menu(player)
 
@@ -966,7 +966,7 @@ def run_game(load_path=None):
 def _main_menu_state():
     while True:
         choice = choose_menu(
-            "Adventure Game",
+            "Realmbound",
             [
                 MenuOption("1", "New Game", "new", aliases=("new", "start")),
                 MenuOption("2", "Load Game", "load", aliases=("load", "continue")),

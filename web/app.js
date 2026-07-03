@@ -1429,7 +1429,7 @@
 
     async mainMenu() {
       while (true) {
-        const choice = await this.chooseMenu("Adventure Game", [
+        const choice = await this.chooseMenu("Realmbound", [
           { key: "1", label: "New Game", value: "new", aliases: ["new", "start"] },
           { key: "2", label: "Load Game", value: "load", aliases: ["load", "continue"] },
           { key: "3", label: "Cloud Saves", value: "cloud", aliases: ["cloud", "online", "sync"] },
@@ -1527,7 +1527,7 @@
     finishGame(player) {
       this.say("\nLord Dreadbiscuit's castle crumbles into a suspiciously buttery pile of crumbs.");
       this.say(`\nGood job, ${player.name || "Adventurer"}, you have completed the game.`);
-      this.say("\nCredits: Adventure Game by Thunderstruck7 and Lord Funion.");
+      this.say("\nCredits: Realmbound by Thunderstruck7 and Lord Funion.");
       this.sayParts(["\nTHE END\nYou finished with ", ...this.moneyParts(player.money), "."]);
       return this.postgameMenu(player);
     }
