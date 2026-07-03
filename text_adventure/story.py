@@ -10,6 +10,7 @@ from pathlib import Path
 
 from . import cloud_saves
 from .combat import GameOver, game_over, spell_fight
+from .data import LONG_ROAD_ENEMIES
 from .logo import show_startup_logo
 from .pacing import ask, say, set_autosave_hook, set_quick_menu_hook
 from .player import activate_frog_partner, add_frog_attack, add_spell, create_player, offer_potions, print_stats
@@ -46,6 +47,7 @@ SCENE_ORDER = (
     "underkeep",
     "clocktower",
     "well",
+    "hundred_day_road",
     "dragon_gate",
     "final_battle",
 )
@@ -65,6 +67,7 @@ SCENE_TITLES = {
     "underkeep": "Underkeep",
     "clocktower": "Clocktower",
     "well": "Old Well",
+    "hundred_day_road": "The Hundred-Day Road",
     "dragon_gate": "Dragon Gate",
     "final_battle": "Final Battle",
     FINISHED_SCENE: "Finished Game",
@@ -674,6 +677,8 @@ def _run_scene(scene_id, player, shop_stock):
         clocktower_scene(player, shop_stock)
     elif scene_id == "well":
         well_scene(player)
+    elif scene_id == "hundred_day_road":
+        hundred_day_road_scene(player, shop_stock)
     elif scene_id == "dragon_gate":
         dragon_gate_scene(player, shop_stock)
     elif scene_id == "final_battle":
@@ -1381,6 +1386,62 @@ def well_scene(player):
     player["backpack"].append("Well Water")
     player["money"] += 7
     say(f"\nA bucket rises with {money_text(7)} and a bottle of cold well water.")
+
+
+def hundred_day_road_scene(player, shop_stock):
+    """A long required expedition through the realm's sealed outer roads."""
+    chapter_names = (
+        "Ash Month",
+        "Lantern Month",
+        "Mirror Month",
+        "Storm Month",
+        "Crownless Month",
+    )
+
+    say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.")
+    say("Mileposts rise out of the dirt one after another, each carved with a different warning.", "beat")
+    say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'", "beat")
+    say("The Dragon Gate waits at the far end, but the road refuses to be skipped.")
+    run_shop(player, shop_stock, advanced=True, legendary=True)
+
+    for index, enemy in enumerate(LONG_ROAD_ENEMIES, start=1):
+        if (index - 1) % 10 == 0:
+            chapter = chapter_names[(index - 1) // 10]
+            say(f"\n=== {chapter} ===", "scene")
+            say(
+                f"The milepost reads {index}/50. The road insists another month has begun.",
+                "beat",
+            )
+            if index > 1:
+                offer_potions(player)
+                run_shop(player, shop_stock, advanced=True, legendary=True)
+
+        enemy_title = enemy.title()
+        if fight_or_run(f"\nEnemy {index}/50: A {enemy_title} blocks the road. Fight or run? ") == "run":
+            say("\nYou turn back. The road folds behind you like a map in a bad mood.", "beat")
+            game_over(player)
+
+        spell_fight(enemy, player)
+
+        if index % 5 == 0:
+            health_gain = min(30, player["healthMax"] - player["health"])
+            mana_gain = min(20, player["manaMax"] - player["mana"])
+            player["health"] += health_gain
+            player["mana"] += mana_gain
+            say(
+                "\nA roadside shrine gives you just enough rest to keep going. "
+                f"Health +{health_gain}, mana +{mana_gain}.",
+                "beat",
+            )
+            offer_potions(player)
+
+    if "Hundred-Day Road Seal" not in player["backpack"]:
+        player["backpack"].append("Hundred-Day Road Seal")
+    player["money"] += 150
+    say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.")
+    say(f"You also pry {money_text(150)} from a stone donation box labeled 'hero maintenance'.", "beat")
+    say("Behind you, the road is full of footprints. Ahead, the Dragon Gate finally stops pretending to be close.")
+    run_shop(player, shop_stock, advanced=True, legendary=True)
 
 
 def dragon_gate_scene(player, shop_stock):
