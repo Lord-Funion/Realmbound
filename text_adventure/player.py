@@ -16,6 +16,7 @@ def create_player():
     health, and enough mana to matter after learning magic.
     """
     return {
+        "name": "Adventurer",
         "money": 0,
         "health": 100,
         "healthMax": 100,
@@ -28,6 +29,7 @@ def create_player():
         "frogPower": 0,
         "frogEnergy": 0,
         "frogEnergyMax": 0,
+        "roadProgress": 0,
         "backpack": [],
         "spells": [],
         "frogAttacks": [],

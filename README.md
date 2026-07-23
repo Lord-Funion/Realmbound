@@ -16,6 +16,7 @@ terminal-style browser port:
 - `text_adventure/` contains the readable modular Python game code.
 - `index.html` runs the browser version.
 - `web/` contains the browser version's CSS and JavaScript.
+- `esp32/` contains the ESP32 + SPI TFT hardware port.
 - The older one-file version lives on the `legacy` git branch.
 
 Run the Python text game:

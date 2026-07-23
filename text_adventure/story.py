@@ -209,8 +209,10 @@ def _normalize_state(raw_state):
         "frogPower",
         "frogEnergy",
         "frogEnergyMax",
+        "roadProgress",
     ):
         player[key] = _normalize_int(raw_player.get(key, player[key]), key)
+    player["roadProgress"] = max(0, min(player["roadProgress"], len(LONG_ROAD_ENEMIES)))
     player["frogMode"] = _normalize_bool(raw_player.get("frogMode", player["frogMode"]), "frogMode")
     player["backpack"] = _normalize_string_list(raw_player.get("backpack", []), "backpack")
     player["spells"] = _normalize_string_list(raw_player.get("spells", []), "spells")
@@ -1398,13 +1400,20 @@ def hundred_day_road_scene(player, shop_stock):
         "Crownless Month",
     )
 
-    say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.")
-    say("Mileposts rise out of the dirt one after another, each carved with a different warning.", "beat")
-    say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'", "beat")
-    say("The Dragon Gate waits at the far end, but the road refuses to be skipped.")
-    run_shop(player, shop_stock, advanced=True, legendary=True)
+    road_progress = max(0, min(player.get("roadProgress", 0), len(LONG_ROAD_ENEMIES)))
+    if road_progress >= len(LONG_ROAD_ENEMIES):
+        say("\nRoad checkpoint loaded: all 50 battles complete.", "scene")
+    elif road_progress:
+        say(f"\nRoad checkpoint loaded: {road_progress}/50 battles complete.", "scene")
+        say(f"The road unfolds again at milepost {road_progress + 1}.", "beat")
+    else:
+        say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.")
+        say("Mileposts rise out of the dirt one after another, each carved with a different warning.", "beat")
+        say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'", "beat")
+        say("The Dragon Gate waits at the far end, but the road refuses to be skipped.")
+        run_shop(player, shop_stock, advanced=True, legendary=True)
 
-    for index, enemy in enumerate(LONG_ROAD_ENEMIES, start=1):
+    for index, enemy in enumerate(LONG_ROAD_ENEMIES[road_progress:], start=road_progress + 1):
         if (index - 1) % 10 == 0:
             chapter = chapter_names[(index - 1) // 10]
             say(f"\n=== {chapter} ===", "scene")
@@ -1422,6 +1431,11 @@ def hundred_day_road_scene(player, shop_stock):
             game_over(player)
 
         spell_fight(enemy, player)
+        player["roadProgress"] = index
+        if index % 5 == 0:
+            say(f"\nRoad checkpoint saved: {index}/50 battles complete.", "quick")
+        else:
+            say(f"\nRoad progress saved: {index}/50.", "quick")
 
         if index % 5 == 0:
             health_gain = min(30, player["healthMax"] - player["health"])
@@ -1437,9 +1451,11 @@ def hundred_day_road_scene(player, shop_stock):
 
     if "Hundred-Day Road Seal" not in player["backpack"]:
         player["backpack"].append("Hundred-Day Road Seal")
-    player["money"] += 150
-    say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.")
-    say(f"You also pry {money_text(150)} from a stone donation box labeled 'hero maintenance'.", "beat")
+        player["money"] += 150
+        say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.")
+        say(f"You also pry {money_text(150)} from a stone donation box labeled 'hero maintenance'.", "beat")
+    else:
+        say("\nYour Hundred-Day Road Seal still glows. This road has already been conquered.")
     say("Behind you, the road is full of footprints. Ahead, the Dragon Gate finally stops pretending to be close.")
     run_shop(player, shop_stock, advanced=True, legendary=True)
 
