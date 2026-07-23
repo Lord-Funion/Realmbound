@@ -211,12 +211,13 @@ std::string cloud_status() {
 std::string make_save_text(const State& state) {
     std::ostringstream out;
     const Player& p = state.player;
-    out << "AdventureGameCppSaveV3\n";
+    out << "AdventureGameCppSaveV4\n";
     out << state.next_scene << "\n";
     out << p.name << "\n";
     out << p.money << "\n" << p.health << "\n" << p.health_max << "\n" << p.mana << "\n"
         << p.mana_max << "\n" << p.armor << "\n" << p.weapon_damage << "\n" << p.extra_damage << "\n";
     out << (p.frog_mode ? 1 : 0) << "\n" << p.frog_power << "\n" << p.frog_energy << "\n" << p.frog_energy_max << "\n";
+    out << p.road_progress << "\n";
 
     auto write_values = [&out](const std::vector<std::string>& values) {
         out << values.size() << "\n";

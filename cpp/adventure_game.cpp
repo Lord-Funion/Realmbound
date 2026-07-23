@@ -148,6 +148,7 @@ struct Player {
     int frog_power = 0;
     int frog_energy = 0;
     int frog_energy_max = 0;
+    int road_progress = 0;
     std::vector<std::string> backpack;
     std::vector<std::string> spells;
     std::vector<std::string> frog_attacks;
@@ -1777,6 +1778,11 @@ void normalize_player(Player& player) {
         player.frog_energy = std::max(0, player.frog_energy);
         player.frog_energy_max = std::max(0, player.frog_energy_max);
     }
+    player.road_progress = std::clamp(
+        player.road_progress,
+        0,
+        static_cast<int>(long_road_enemies().size())
+    );
 }
 
 void save_state(const State& state, const std::string& path = SAVE_PATH) {
@@ -1786,12 +1792,13 @@ void save_state(const State& state, const std::string& path = SAVE_PATH) {
         throw std::runtime_error("Could not write save file.");
     }
     const Player& p = state.player;
-    out << "AdventureGameCppSaveV3\n";
+    out << "AdventureGameCppSaveV4\n";
     out << state.next_scene << "\n";
     out << p.name << "\n";
     out << p.money << "\n" << p.health << "\n" << p.health_max << "\n" << p.mana << "\n"
         << p.mana_max << "\n" << p.armor << "\n" << p.weapon_damage << "\n" << p.extra_damage << "\n";
     out << (p.frog_mode ? 1 : 0) << "\n" << p.frog_power << "\n" << p.frog_energy << "\n" << p.frog_energy_max << "\n";
+    out << p.road_progress << "\n";
     write_vector(out, p.backpack);
     write_vector(out, p.spells);
     write_vector(out, p.frog_attacks);
@@ -1810,7 +1817,9 @@ State load_state(const std::string& path = SAVE_PATH) {
     std::getline(in, line);
     bool version_2 = line == "AdventureGameCppSaveV2";
     bool version_3 = line == "AdventureGameCppSaveV3";
-    if (line != "AdventureGameCppSaveV1" && !version_2 && !version_3) {
+    bool version_4 = line == "AdventureGameCppSaveV4";
+    bool version_3_or_newer = version_3 || version_4;
+    if (line != "AdventureGameCppSaveV1" && !version_2 && !version_3_or_newer) {
         throw std::runtime_error("Save file is not a C++ port save.");
     }
 
@@ -1818,7 +1827,7 @@ State load_state(const std::string& path = SAVE_PATH) {
     state.shop_stock = create_shop_stock();
     std::getline(in, state.next_scene);
     Player& p = state.player;
-    if (version_3) {
+    if (version_3_or_newer) {
         std::getline(in, p.name);
     }
     std::getline(in, line); p.money = std::stoi(line);
@@ -1827,19 +1836,22 @@ State load_state(const std::string& path = SAVE_PATH) {
     std::getline(in, line); p.mana = std::stoi(line);
     std::getline(in, line); p.mana_max = std::stoi(line);
     std::getline(in, line); p.armor = std::stoi(line);
-    if (version_2 || version_3) {
+    if (version_2 || version_3_or_newer) {
         std::getline(in, line); p.weapon_damage = std::stoi(line);
     }
     std::getline(in, line); p.extra_damage = std::stoi(line);
-    if (version_3) {
+    if (version_3_or_newer) {
         std::getline(in, line); p.frog_mode = std::stoi(line) != 0;
         std::getline(in, line); p.frog_power = std::stoi(line);
         std::getline(in, line); p.frog_energy = std::stoi(line);
         std::getline(in, line); p.frog_energy_max = std::stoi(line);
     }
+    if (version_4) {
+        std::getline(in, line); p.road_progress = std::stoi(line);
+    }
     p.backpack = read_vector(in);
     p.spells = read_vector(in);
-    if (version_3) {
+    if (version_3_or_newer) {
         p.frog_attacks = read_vector(in);
     }
 
@@ -2311,14 +2323,22 @@ void hundred_day_road_scene(Player& player, std::unordered_map<std::string, bool
         "Crownless Month",
     };
 
-    say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.");
-    say("Mileposts rise out of the dirt one after another, each carved with a different warning.");
-    say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'");
-    say("The Dragon Gate waits at the far end, but the road refuses to be skipped.");
-    run_shop(player, shop_stock, true, true);
-
     const auto& enemies = long_road_enemies();
-    for (std::size_t offset = 0; offset < enemies.size(); ++offset) {
+    int road_progress = std::clamp(player.road_progress, 0, static_cast<int>(enemies.size()));
+    if (road_progress >= static_cast<int>(enemies.size())) {
+        say("\nRoad checkpoint loaded: all 50 battles complete.");
+    } else if (road_progress > 0) {
+        say("\nRoad checkpoint loaded: " + std::to_string(road_progress) + "/50 battles complete.");
+        say("The road unfolds again at milepost " + std::to_string(road_progress + 1) + ".");
+    } else {
+        say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.");
+        say("Mileposts rise out of the dirt one after another, each carved with a different warning.");
+        say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'");
+        say("The Dragon Gate waits at the far end, but the road refuses to be skipped.");
+        run_shop(player, shop_stock, true, true);
+    }
+
+    for (std::size_t offset = static_cast<std::size_t>(road_progress); offset < enemies.size(); ++offset) {
         int index = static_cast<int>(offset) + 1;
         const std::string& enemy = enemies[offset];
 
@@ -2337,6 +2357,12 @@ void hundred_day_road_scene(Player& player, std::unordered_map<std::string, bool
         }
 
         spell_fight(enemy, player);
+        player.road_progress = index;
+        if (index % 5 == 0) {
+            say("\nRoad checkpoint saved: " + std::to_string(index) + "/50 battles complete.");
+        } else {
+            say("\nRoad progress saved: " + std::to_string(index) + "/50.");
+        }
 
         if (index % 5 == 0) {
             int health_gain = std::min(30, player.health_max - player.health);
@@ -2351,10 +2377,12 @@ void hundred_day_road_scene(Player& player, std::unordered_map<std::string, bool
 
     if (!has_item(player, "Hundred-Day Road Seal")) {
         player.backpack.push_back("Hundred-Day Road Seal");
+        player.money += 150;
+        say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.");
+        say("You also pry " + money_text(150) + " from a stone donation box labeled 'hero maintenance'.");
+    } else {
+        say("\nYour Hundred-Day Road Seal still glows. This road has already been conquered.");
     }
-    player.money += 150;
-    say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.");
-    say("You also pry " + money_text(150) + " from a stone donation box labeled 'hero maintenance'.");
     say("Behind you, the road is full of footprints. Ahead, the Dragon Gate finally stops pretending to be close.");
     run_shop(player, shop_stock, true, true);
 }
