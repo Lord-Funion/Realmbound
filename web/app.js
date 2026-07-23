@@ -995,6 +995,7 @@
         frogPower: 0,
         frogEnergy: 0,
         frogEnergyMax: 0,
+        roadProgress: 0,
         backpack: [],
         spells: [],
         frogAttacks: [],
@@ -1244,6 +1245,7 @@
         "frogPower",
         "frogEnergy",
         "frogEnergyMax",
+        "roadProgress",
       ]) {
         const value = rawPlayer[key] ?? player[key];
         if (!Number.isInteger(value)) {
@@ -1251,6 +1253,7 @@
         }
         player[key] = value;
       }
+      player.roadProgress = Math.max(0, Math.min(player.roadProgress, LONG_ROAD_ENEMIES.length));
       const frogMode = rawPlayer.frogMode ?? player.frogMode;
       if (typeof frogMode !== "boolean") {
         throw new Error("Save field 'frogMode' is not a valid true/false value.");
@@ -2549,13 +2552,24 @@
         "Crownless Month",
       ];
 
-      this.say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.");
-      this.say("Mileposts rise out of the dirt one after another, each carved with a different warning.");
-      this.say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'");
-      this.say("The Dragon Gate waits at the far end, but the road refuses to be skipped.");
-      await this.runShop(player, shopStock, true, true);
+      const roadProgress = Math.max(0, Math.min(player.roadProgress || 0, LONG_ROAD_ENEMIES.length));
+      if (roadProgress >= LONG_ROAD_ENEMIES.length) {
+        this.say("\nRoad checkpoint loaded: all 50 battles complete.");
+      } else if (roadProgress > 0) {
+        this.say(`\nRoad checkpoint loaded: ${roadProgress}/50 battles complete.`);
+        this.say(`The road unfolds again at milepost ${roadProgress + 1}.`);
+      } else {
+        this.say("\nThe Ancient Map Fragment unfolds into a road that is much longer than the paper should allow.");
+        this.say("Mileposts rise out of the dirt one after another, each carved with a different warning.");
+        this.say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'");
+        this.say("The Dragon Gate waits at the far end, but the road refuses to be skipped.");
+        await this.runShop(player, shopStock, true, true);
+      }
 
       for (const [offset, enemy] of LONG_ROAD_ENEMIES.entries()) {
+        if (offset < roadProgress) {
+          continue;
+        }
         const index = offset + 1;
         if (offset % 10 === 0) {
           const chapter = chapterNames[Math.floor(offset / 10)];
@@ -2574,6 +2588,12 @@
         }
 
         await this.spellFight(enemy, player);
+        player.roadProgress = index;
+        if (index % 5 === 0) {
+          this.say(`\nRoad checkpoint saved: ${index}/50 battles complete.`);
+        } else {
+          this.say(`\nRoad progress saved: ${index}/50.`);
+        }
 
         if (index % 5 === 0) {
           const healthGain = Math.min(30, player.healthMax - player.health);
@@ -2587,10 +2607,12 @@
 
       if (!player.backpack.includes("Hundred-Day Road Seal")) {
         player.backpack.push("Hundred-Day Road Seal");
+        player.money += 150;
+        this.say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.");
+        this.sayParts(["You also pry ", ...this.moneyParts(150), " from a stone donation box labeled 'hero maintenance'."]);
+      } else {
+        this.say("\nYour Hundred-Day Road Seal still glows. This road has already been conquered.");
       }
-      player.money += 150;
-      this.say("\nThe fiftieth milepost cracks open and reveals the Hundred-Day Road Seal.");
-      this.sayParts(["You also pry ", ...this.moneyParts(150), " from a stone donation box labeled 'hero maintenance'."]);
       this.say("Behind you, the road is full of footprints. Ahead, the Dragon Gate finally stops pretending to be close.");
       await this.runShop(player, shopStock, true, true);
     }
