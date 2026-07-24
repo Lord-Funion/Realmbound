@@ -698,6 +698,29 @@ def _extra_fight(player, monster_name, intro, run_text):
     offer_potions(player)
 
 
+def _visit_church(player, church_name, automatic=False):
+    """Offer a quiet sanctuary without turning checkpoints into another menu."""
+    say(f"\nYou arrive at {church_name}. Its doors stand open and warm lamplight fills the road.")
+    if not automatic and yes_no("\nRest inside the church? (yes/no): ") == "no":
+        say("\nYou leave the sanctuary quiet for the next traveler.", "quick")
+        return False
+
+    health_gain = max(0, player["healthMax"] - player["health"])
+    mana_gain = max(0, player["manaMax"] - player["mana"])
+    player["health"] = player["healthMax"]
+    player["mana"] = player["manaMax"]
+
+    if health_gain or mana_gain:
+        say(
+            f"\nThe church bells ring once. Health +{health_gain}, mana +{mana_gain}; "
+            "both are now fully restored.",
+            "beat",
+        )
+    else:
+        say("\nYou rest beneath the painted windows. You were already fully restored.", "beat")
+    return True
+
+
 def _finish_game(player):
     say("\nThe Realmbound Dragon's storm breaks apart into silver sparks above the saved realm.", "scene")
     say(f"\nGood job, {player.get('name', 'Adventurer')}, you have completed the game.", "scene")
@@ -1121,6 +1144,8 @@ def village_scene(player, shop_stock):
     say('\nA villager says, "Thank you for saving our village."')
     say('"Take this Big Health Potion. It will restore your health."', "beat")
     player["backpack"].append("Big Health Potion")
+    say("\nThe villagers reopen the Church of the Little Lantern and invite you inside.")
+    _visit_church(player, "the Church of the Little Lantern")
     offer_potions(player)
 
     hidden = ask("\nBefore you leave, the cobblestones seem to whisper. Type what you heard or press Enter: ")
@@ -1264,6 +1289,8 @@ def moonlit_market_scene(player, shop_stock):
     """A late-game market with weapons and stranger magic."""
     say("\nAt the top of the pass, paper lanterns glow over the Moonlit Market.")
     say('A merchant named Madam Probably says, "Everything here is almost safe."', "beat")
+    say("Beyond the stalls, the Chapel of the Second Moon keeps its silver doors open all night.")
+    _visit_church(player, "the Chapel of the Second Moon")
     run_shop(player, shop_stock, advanced=True)
 
     say("\nBehind the last stall, a shadow knight blocks the castle road.")
@@ -1399,6 +1426,13 @@ def hundred_day_road_scene(player, shop_stock):
         "Storm Month",
         "Crownless Month",
     )
+    road_churches = (
+        "the Church of First Footfall",
+        "Emberglass Chapel",
+        "the Church of Honest Mirrors",
+        "Stormbell Abbey",
+        "the Church of the Empty Crown",
+    )
 
     road_progress = max(0, min(player.get("roadProgress", 0), len(LONG_ROAD_ENEMIES)))
     if road_progress >= len(LONG_ROAD_ENEMIES):
@@ -1411,6 +1445,7 @@ def hundred_day_road_scene(player, shop_stock):
         say("Mileposts rise out of the dirt one after another, each carved with a different warning.", "beat")
         say("Rumblerod squints at the first marker and says, 'This is the Hundred-Day Road. Bring snacks.'", "beat")
         say("The Dragon Gate waits at the far end, but the road refuses to be skipped.")
+        _visit_church(player, road_churches[0], automatic=True)
         run_shop(player, shop_stock, advanced=True, legendary=True)
 
     for index, enemy in enumerate(LONG_ROAD_ENEMIES[road_progress:], start=road_progress + 1):
@@ -1422,7 +1457,11 @@ def hundred_day_road_scene(player, shop_stock):
                 "beat",
             )
             if index > 1:
-                offer_potions(player)
+                _visit_church(
+                    player,
+                    road_churches[(index - 1) // 10],
+                    automatic=True,
+                )
                 run_shop(player, shop_stock, advanced=True, legendary=True)
 
         enemy_title = enemy.title()
@@ -1463,6 +1502,8 @@ def hundred_day_road_scene(player, shop_stock):
 def dragon_gate_scene(player, shop_stock):
     """Prepare at the dragon forge and open the last gate."""
     say("\nThe Silver Key fits a gate made of old dragon scales.")
+    say("Beside the gate stands the Church of the Last Door, built for heroes who made it this far.")
+    _visit_church(player, "the Church of the Last Door", automatic=True)
     say("Next to it, two blacksmiths argue over whether anvils count as musical instruments.")
     say('They call their shop The Dragon Forge and offer one last chance to gear up.', "beat")
     run_shop(player, shop_stock, advanced=True, legendary=True)
