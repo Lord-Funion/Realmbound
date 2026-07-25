@@ -33,12 +33,9 @@ jobs:
           set +e
           python tools/_apply_upgrade.py > upgrade-error.txt 2>&1
           status=$?
-          cat upgrade-error.txt
-          set -e
 
-          if [ $status -ne 0 ]; then
-            if grep -q "SyntaxError: '(' was never closed" upgrade-error.txt && grep -q "text_adventure/data.py" upgrade-error.txt; then
-              python - <<'PY'
+          if [ $status -ne 0 ] && grep -q "SyntaxError: '(' was never closed" upgrade-error.txt && grep -q "text_adventure/data.py" upgrade-error.txt; then
+            python - <<'PY' >> upgrade-error.txt 2>&1
           from pathlib import Path
           path = Path("text_adventure/data.py")
           text = path.read_text(encoding="utf-8")
@@ -49,15 +46,23 @@ jobs:
               text = text.replace(marker, "\n)\n\n# Story balance is applied after the complete enemy list is built.", 1)
               path.write_text(text, encoding="utf-8")
           PY
-              python tools/make_encounters.py
+            repair_status=$?
+            if [ $repair_status -eq 0 ]; then
+              python tools/make_encounters.py >> upgrade-error.txt 2>&1
+              status=$?
             else
-              git config user.name "github-actions[bot]"
-              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-              git add upgrade-error.txt
-              git commit -m "Record encounter upgrade failure"
-              git push
-              exit $status
+              status=$repair_status
             fi
+          fi
+
+          cat upgrade-error.txt
+          if [ $status -ne 0 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add upgrade-error.txt
+            git commit -m "Record encounter upgrade failure"
+            git push
+            exit $status
           fi
           rm -f upgrade-error.txt
 
