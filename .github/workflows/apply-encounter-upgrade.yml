@@ -1,0 +1,50 @@
+name: Apply encounter and balance upgrade
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tools/_apply_upgrade.py
+      - .github/workflows/apply-encounter-upgrade.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONPATH: .
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply upgrade
+        run: python tools/_apply_upgrade.py
+
+      - name: Validate JSON and code
+        run: |
+          python -m json.tool story/encounters.json > /dev/null
+          python -m py_compile text_adventure/*.py tools/make_encounters.py tools/check_balance.py
+          node --check web/app.js
+          python tools/check_balance.py
+
+      - name: Remove temporary bootstrap files
+        run: rm tools/_apply_upgrade.py .github/workflows/apply-encounter-upgrade.yml
+
+      - name: Commit generated implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Expand custom encounters and rebalance combat"
+          git push
