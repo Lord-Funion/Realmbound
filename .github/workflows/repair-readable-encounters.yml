@@ -1,5 +1,6 @@
 name: Build readable encounters
 
+# This branch change deliberately starts the pull-request build.
 on:
   push:
     branches: [main]
@@ -32,12 +33,12 @@ jobs:
           python-version: '3.12'
 
       - name: Generate readable encounter data
-        run: python tools/make_encounters.py
+        run: PYTHONPATH=. python tools/make_encounters.py
 
       - name: Validate generated files
         run: |
           python -m json.tool story/encounters.json > /dev/null
-          python -m py_compile text_adventure/encounter_data.py text_adventure/story.py
+          PYTHONPATH=. python -m py_compile text_adventure/encounter_data.py text_adventure/story.py
           node --check web/app.js
 
       - name: Commit generated changes
