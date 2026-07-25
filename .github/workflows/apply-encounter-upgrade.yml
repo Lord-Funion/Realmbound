@@ -34,15 +34,32 @@ jobs:
           python tools/_apply_upgrade.py > upgrade-error.txt 2>&1
           status=$?
           cat upgrade-error.txt
+          set -e
+
           if [ $status -ne 0 ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add upgrade-error.txt
-            git commit -m "Record encounter upgrade failure"
-            git push
-            exit $status
+            if grep -q "SyntaxError: '(' was never closed" upgrade-error.txt && grep -q "text_adventure/data.py" upgrade-error.txt; then
+              python - <<'PY'
+          from pathlib import Path
+          path = Path("text_adventure/data.py")
+          text = path.read_text(encoding="utf-8")
+          marker = "\n# Story balance is applied after the complete enemy list is built."
+          if "\n)\n\n# Story balance is applied" not in text:
+              if marker not in text:
+                  raise SystemExit("Could not find the known road-tuple repair marker.")
+              text = text.replace(marker, "\n)\n\n# Story balance is applied after the complete enemy list is built.", 1)
+              path.write_text(text, encoding="utf-8")
+          PY
+              python tools/make_encounters.py
+            else
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git add upgrade-error.txt
+              git commit -m "Record encounter upgrade failure"
+              git push
+              exit $status
+            fi
           fi
-          rm upgrade-error.txt
+          rm -f upgrade-error.txt
 
       - name: Validate JSON and code
         run: |
