@@ -2,8 +2,8 @@
 """Build and synchronize Realmbound's cross-port story source bundle.
 
 The repository currently keeps the executable story in different languages and,
-for C++ and legacy, on different branches.  This tool makes one deterministic
-JSON file the canonical bundle.  Each port entry contains the complete source
+for C++ and legacy, on different branches. This tool makes one deterministic
+JSON file the canonical bundle. Each port entry contains the complete source
 file that implements that port's story, split into lines for readable diffs.
 
 Typical workflow:
@@ -86,14 +86,13 @@ def available_ref(branch: str) -> str | None:
 
 
 def read_source(spec: PortSpec) -> tuple[str, str, str]:
-    """Return source text, source ref label, and blob SHA for a port."""
+    """Return source text, canonical source ref, and blob SHA for a port."""
     local_path = ROOT / spec.path
-    branch = current_branch()
 
     if spec.local_on_source_branch and local_path.exists():
         text = local_path.read_text(encoding="utf-8")
         blob_sha = run_git("hash-object", spec.path).strip()
-        return text, branch or "working-tree", blob_sha
+        return text, spec.branch, blob_sha
 
     ref = available_ref(spec.branch)
     if ref is None:
