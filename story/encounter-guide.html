@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A complete guide to reading and editing Realmbound's shared encounter JSON file.">
+  <title>Realmbound Encounter Editor Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090713;
+      --panel: #141025;
+      --panel-2: #1b1530;
+      --line: #342a51;
+      --text: #f5f0ff;
+      --muted: #bcb0d4;
+      --purple: #aa7cff;
+      --purple-2: #d7beff;
+      --green: #77e6a5;
+      --yellow: #ffd978;
+      --red: #ff8f9c;
+      --blue: #82cfff;
+      --code: #080610;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, 0.20), transparent 34rem),
+        radial-gradient(circle at 90% 18%, rgba(65, 180, 255, 0.10), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a { color: var(--purple-2); }
+    a:hover { color: white; }
+    code, pre, kbd { font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; }
+    code:not(pre code) {
+      padding: 0.15rem 0.4rem;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.045);
+      color: #eadfff;
+    }
+
+    .layout {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 28px;
+      padding: 28px 0 72px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      height: max-content;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(20, 16, 37, 0.88);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .sidebar-title {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .sidebar-title strong { display: block; font-size: 1.05rem; }
+    .sidebar-title span { display: block; color: var(--muted); font-size: 0.82rem; margin-top: 4px; }
+    nav { padding: 10px; }
+    nav a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 9px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.91rem;
+    }
+    nav a:hover, nav a.active { background: rgba(170, 124, 255, 0.12); color: white; }
+
+    main { min-width: 0; }
+    .hero {
+      padding: clamp(28px, 6vw, 58px);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(33, 24, 59, 0.96), rgba(16, 12, 31, 0.96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      right: -140px;
+      top: -160px;
+      background: rgba(170, 124, 255, 0.13);
+      filter: blur(4px);
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(119, 230, 165, 0.10);
+      border: 1px solid rgba(119, 230, 165, 0.25);
+      color: var(--green);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    h1 { font-size: clamp(2.35rem, 6vw, 4.8rem); line-height: 0.98; margin: 22px 0 20px; max-width: 900px; }
+    .hero p { max-width: 760px; color: var(--muted); font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      font-weight: 700;
+      color: white;
+      background: var(--panel-2);
+    }
+    .button.primary { background: var(--purple); color: #120a20; border-color: transparent; }
+    .button:hover { transform: translateY(-1px); }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .status {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(9, 7, 19, 0.45);
+    }
+    .status b { display: block; margin-bottom: 4px; }
+    .status span { color: var(--muted); font-size: 0.88rem; }
+
+    section {
+      margin-top: 28px;
+      padding: clamp(22px, 4vw, 36px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(20, 16, 37, 0.91);
+      box-shadow: var(--shadow);
+      scroll-margin-top: 24px;
+    }
+    h2 { font-size: clamp(1.55rem, 4vw, 2.3rem); line-height: 1.15; margin: 0 0 14px; }
+    h3 { margin-top: 30px; font-size: 1.23rem; }
+    p, li { color: var(--muted); }
+    strong { color: var(--text); }
+
+    .callout {
+      margin: 20px 0;
+      padding: 18px 20px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      border-left-width: 5px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+    .callout strong { display: block; margin-bottom: 5px; }
+    .callout.danger { border-left-color: var(--red); }
+    .callout.warning { border-left-color: var(--yellow); }
+    .callout.success { border-left-color: var(--green); }
+    .callout.info { border-left-color: var(--blue); }
+
+    .steps { counter-reset: guide-step; display: grid; gap: 14px; margin-top: 20px; }
+    .step {
+      counter-increment: guide-step;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+    .step::before {
+      content: counter(guide-step);
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--purple);
+      color: #130b20;
+      font-weight: 900;
+    }
+    .step h3 { margin: 2px 0 5px; }
+    .step p { margin: 0; }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+      margin: 22px 0;
+    }
+    .diagram-card {
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 16px;
+      background: var(--panel-2);
+    }
+    .diagram-card .label { color: var(--purple-2); font-weight: 800; }
+    .diagram-card p { font-size: 0.9rem; margin-bottom: 0; }
+
+    .code-wrap {
+      position: relative;
+      margin: 18px 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--code);
+    }
+    .code-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    pre {
+      margin: 0;
+      padding: 20px;
+      overflow: auto;
+      color: #eee8ff;
+      line-height: 1.58;
+      font-size: 0.88rem;
+      tab-size: 2;
+    }
+    .copy {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: white;
+      padding: 6px 9px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .copy:hover { border-color: var(--purple); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+    th, td { padding: 12px 13px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--panel-2); color: var(--text); }
+    td { color: var(--muted); }
+    .required { color: var(--red); font-weight: 800; }
+    .optional { color: var(--green); font-weight: 800; }
+
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .mini-card { padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,0.025); }
+    .mini-card h3 { margin-top: 0; }
+
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { position: relative; padding-left: 28px; margin: 9px 0; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 900; }
+
+    footer { color: var(--muted); text-align: center; padding: 34px 10px 0; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; top: 0; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      .status-grid, .diagram, .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Guide navigation">
+      <div class="sidebar-title">
+        <strong>Encounter Guide</strong>
+        <span>Realmbound story data</span>
+      </div>
+      <nav>
+        <a href="#start">Start here</a>
+        <a href="#structure">How the file works</a>
+        <a href="#add">Add a battle</a>
+        <a href="#fields">Field reference</a>
+        <a href="#rewards">Rewards</a>
+        <a href="#placement">Encounter placement</a>
+        <a href="#limits">Current limitations</a>
+        <a href="#test">Validate and test</a>
+        <a href="#mistakes">Common mistakes</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero" id="start">
+        <span class="eyebrow">No source-code dump</span>
+        <h1>Realmbound Encounter Editor</h1>
+        <p>
+          This guide explains how to read <code>story/encounters.json</code> and add a new battle
+          that automatically appears in both the Python and HTML5 versions of Realmbound.
+        </p>
+        <div class="actions">
+          <a class="button primary" href="encounters.json">Open encounters.json</a>
+          <a class="button" href="#add">Jump to the copy-paste example</a>
+        </div>
+        <div class="status-grid">
+          <div class="status"><b>Main file</b><span>story/encounters.json</span></div>
+          <div class="status"><b>Connected ports</b><span>Python and HTML5</span></div>
+          <div class="status"><b>Automatic additions</b><span>Battle encounters</span></div>
+        </div>
+      </header>
+
+      <section>
+        <h2>The rule that prevents your encounter from disappearing</h2>
+        <div class="callout danger">
+          <strong>Every encounter you create must contain <code>"user_added": true</code>.</strong>
+          The encounter generator rebuilds the file from the game. It preserves custom entries only when
+          they are marked as user-added. Leaving this out can cause your custom encounter to be removed the
+          next time the generator runs.
+        </div>
+        <div class="callout warning">
+          <strong>JSON does not allow comments.</strong>
+          Do not put <code>// explanation</code> or <code># explanation</code> inside the JSON file. The examples
+          in this guide are valid JSON and can be copied directly.
+        </div>
+      </section>
+
+      <section id="structure">
+        <h2>How the file is organized</h2>
+        <p>You only need to understand three areas to add an encounter.</p>
+        <div class="diagram">
+          <div class="diagram-card">
+            <div class="label">1. data_encounters</div>
+            <p>The complete definition of each JSON-controlled encounter: enemy, intro, running result, and rewards.</p>
+          </div>
+          <div class="diagram-card">
+            <div class="label">2. scenes</div>
+            <p>Each story scene has an <code>after_scene</code> list. Put your encounter ID there to make it run.</p>
+          </div>
+          <div class="diagram-card">
+            <div class="label">3. monsters</div>
+            <p>A reference list of enemy stats. At present, it is generated for reading and is not the combat engine's editable source.</p>
+          </div>
+        </div>
+
+        <h3>What the major sections mean</h3>
+        <table>
+          <thead><tr><th>Section</th><th>Purpose</th><th>Should you edit it?</th></tr></thead>
+          <tbody>
+            <tr><td><code>scene_order</code></td><td>The order of the main story scenes.</td><td>Usually no.</td></tr>
+            <tr><td><code>scenes</code></td><td>Readable scene summaries and encounter lists.</td><td>Edit only the scene's <code>after_scene</code> list for normal additions.</td></tr>
+            <tr><td><code>scenes.*.encounters</code></td><td>A generated list of encounters already controlled by custom Python/JavaScript scene logic.</td><td>No. It is mainly a map of the existing story.</td></tr>
+            <tr><td><code>data_encounters</code></td><td>Full definitions for data-controlled encounters.</td><td>Yes. Add your custom encounter here.</td></tr>
+            <tr><td><code>monsters</code></td><td>A readable copy of monster stats.</td><td>Not currently. Editing it does not yet change combat stats.</td></tr>
+            <tr><td><code>sequences</code></td><td>Information about special sequences such as the Hundred-Day Road.</td><td>Not currently.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="add">
+        <h2>Add a new battle</h2>
+        <p>This example adds an Angry Bridge Goblin after the Village scene.</p>
+
+        <div class="steps">
+          <article class="step">
+            <div>
+              <h3>Choose an existing enemy</h3>
+              <p>Use an enemy name already listed under <code>monsters</code>. This example uses <code>goblin</code>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>Create a unique ID</h3>
+              <p>Use lowercase letters and underscores. Example: <code>angry_bridge_goblin</code>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>Add the full object to <code>data_encounters</code></h3>
+              <p>Put a comma after the previous object, then paste the encounter below.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>Inside the data_encounters object</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>"angry_bridge_goblin": {
+  "id": "angry_bridge_goblin",
+  "name": "Angry Bridge Goblin",
+  "scene": "village",
+  "user_added": true,
+  "type": "battle",
+  "enemy": "goblin",
+  "intro": [
+    "A goblin jumps from beneath the bridge and demands a crossing fee."
+  ],
+  "choice": "fight_or_run",
+  "run": {
+    "text": "The goblin catches you before you reach the road.",
+    "game_over": true
+  },
+  "victory": {
+    "rewards": [
+      {
+        "money": {
+          "min": 5,
+          "max": 12
+        }
+      }
+    ],
+    "offer_potions": true
+  }
+}</code></pre>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <div>
+              <h3>Add its ID to the scene</h3>
+              <p>Find <code>scenes</code> → <code>village</code> → <code>after_scene</code> and add the exact same ID.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>Village scene placement</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>"village": {
+  "title": "Village",
+  "summary": "Save the village, receive a potion, and visit Gnome Depot.",
+  "encounters": [
+    ...existing generated entries stay here...
+  ],
+  "after_scene": [
+    "angry_bridge_goblin"
+  ]
+}</code></pre>
+        </div>
+
+        <div class="callout success">
+          <strong>That is enough to connect the battle.</strong>
+          When the Village scene finishes, the Python and HTML5 versions read the ID from
+          <code>after_scene</code>, load its object from <code>data_encounters</code>, and run it.
+        </div>
+      </section>
+
+      <section id="fields">
+        <h2>Encounter field reference</h2>
+        <table>
+          <thead><tr><th>Field</th><th>Required?</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td class="required">Required</td><td>The encounter's unique identifier. It must match its key and the ID placed in <code>after_scene</code>.</td></tr>
+            <tr><td><code>name</code></td><td class="optional">Recommended</td><td>A readable name for humans. The current runtime does not print it automatically.</td></tr>
+            <tr><td><code>scene</code></td><td class="optional">Recommended</td><td>Documents which scene the encounter belongs to. Actual placement is controlled by <code>after_scene</code>.</td></tr>
+            <tr><td><code>user_added</code></td><td class="required">Required</td><td>Must be <code>true</code> so the generator preserves the custom encounter.</td></tr>
+            <tr><td><code>type</code></td><td class="required">Required</td><td>Use <code>"battle"</code>. That is the automatically runnable custom type currently supported.</td></tr>
+            <tr><td><code>enemy</code></td><td class="required">Required</td><td>The exact lowercase name of an enemy that already exists in the game's combat data.</td></tr>
+            <tr><td><code>intro</code></td><td class="optional">Optional</td><td>An array of text lines shown before the battle.</td></tr>
+            <tr><td><code>choice</code></td><td class="optional">Optional</td><td>Use <code>"fight_or_run"</code> to ask the player. Leave it out to start the battle immediately.</td></tr>
+            <tr><td><code>run</code></td><td class="optional">Optional</td><td>Controls the result when the player runs. It can show text and optionally cause game over.</td></tr>
+            <tr><td><code>victory.rewards</code></td><td class="optional">Optional</td><td>A list of item and money rewards granted after victory.</td></tr>
+            <tr><td><code>victory.offer_potions</code></td><td class="optional">Optional</td><td>When true, opens the normal potion-use prompt after the battle.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>Do not rely on <code>victory.text</code> yet.</strong>
+          Some generated entries contain an empty <code>victory.text</code> array, but the current Python and HTML5
+          encounter runners do not display it. Put essential text in <code>intro</code> for now.
+        </div>
+      </section>
+
+      <section id="rewards">
+        <h2>Reward examples</h2>
+        <div class="two-col">
+          <article class="mini-card">
+            <h3>Fixed money</h3>
+            <div class="code-wrap"><div class="code-title"><span>Exactly 20 Whoop Nickels</span><button class="copy" type="button">Copy</button></div><pre><code>"rewards": [
+  { "money": 20 }
+]</code></pre></div>
+          </article>
+          <article class="mini-card">
+            <h3>Random money</h3>
+            <div class="code-wrap"><div class="code-title"><span>Between 10 and 25</span><button class="copy" type="button">Copy</button></div><pre><code>"rewards": [
+  {
+    "money": {
+      "min": 10,
+      "max": 25
+    }
+  }
+]</code></pre></div>
+          </article>
+          <article class="mini-card">
+            <h3>Item reward</h3>
+            <div class="code-wrap"><div class="code-title"><span>Adds an inventory item</span><button class="copy" type="button">Copy</button></div><pre><code>"rewards": [
+  { "item": "Moon Cheese" }
+]</code></pre></div>
+          </article>
+          <article class="mini-card">
+            <h3>Money and an item</h3>
+            <div class="code-wrap"><div class="code-title"><span>Multiple rewards</span><button class="copy" type="button">Copy</button></div><pre><code>"rewards": [
+  { "money": 15 },
+  { "item": "Small Health Potion" }
+]</code></pre></div>
+          </article>
+        </div>
+        <p>Use <code>"rewards": []</code> when the encounter should give nothing.</p>
+      </section>
+
+      <section id="placement">
+        <h2>Where an encounter runs</h2>
+        <p>
+          Custom JSON encounters currently run from a scene's <code>after_scene</code> list. They run after that
+          scene's existing coded story finishes and before the game advances to the next normal checkpoint.
+        </p>
+
+        <h3>Multiple encounters run from top to bottom</h3>
+        <div class="code-wrap">
+          <div class="code-title"><span>Three added battles in order</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>"after_scene": [
+  "angry_bridge_goblin",
+  "bridge_troll",
+  "lost_skeleton"
+]</code></pre>
+        </div>
+        <p>The goblin runs first, then the troll, then the skeleton.</p>
+
+        <h3>Do not add the ID to <code>encounters</code></h3>
+        <p>
+          The <code>encounters</code> list describes battles and events already found inside the original scene code.
+          The generator rebuilds that list. Put custom IDs in <code>after_scene</code> instead.
+        </p>
+      </section>
+
+      <section id="limits">
+        <h2>What this system can and cannot do yet</h2>
+        <div class="two-col">
+          <article class="mini-card">
+            <h3 style="color: var(--green)">Works now</h3>
+            <ul class="checklist">
+              <li>Add an extra battle after any normal scene.</li>
+              <li>Use an existing enemy.</li>
+              <li>Show one or more intro lines.</li>
+              <li>Allow fight or run.</li>
+              <li>Make running cause game over or safely end the encounter.</li>
+              <li>Give fixed money, random money, or items.</li>
+              <li>Run the same encounter in Python and HTML5.</li>
+            </ul>
+          </article>
+          <article class="mini-card">
+            <h3 style="color: var(--yellow)">Not data-driven yet</h3>
+            <ul>
+              <li>Creating a completely new monster only in JSON.</li>
+              <li>Changing monster stats by editing the generated <code>monsters</code> section.</li>
+              <li>Adding a shop, church, puzzle, or secret route as a custom automatic encounter.</li>
+              <li>Inserting an encounter halfway through an existing coded scene.</li>
+              <li>Automatically syncing JSON additions to the separate C++ or legacy branches.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="callout warning">
+          <strong>An enemy must already exist in both connected ports.</strong>
+          The Python and HTML5 combat engines still own their monster definitions. Pick a name already listed under
+          <code>monsters</code>. Adding a brand-new name only to the JSON will cause an unknown-monster error.
+        </div>
+      </section>
+
+      <section id="test">
+        <h2>Validate and test your edit</h2>
+        <h3>1. Check the JSON syntax</h3>
+        <div class="code-wrap">
+          <div class="code-title"><span>Run from the repository root</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>python3 -m json.tool story/encounters.json &gt; /dev/null</code></pre>
+        </div>
+        <p>No output means the JSON syntax is valid. An error gives the approximate line and column that need fixing.</p>
+
+        <h3>2. Test the Python version</h3>
+        <div class="code-wrap">
+          <div class="code-title"><span>Start Realmbound</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>python3 main.py</code></pre>
+        </div>
+
+        <h3>3. Test the HTML5 version</h3>
+        <div class="code-wrap">
+          <div class="code-title"><span>Start a local web server</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>python3 -m http.server 4173</code></pre>
+        </div>
+        <p>Open <code>http://127.0.0.1:4173/</code>. Do not open <code>index.html</code> directly as a local file, because the browser needs to fetch <code>story/encounters.json</code>.</p>
+
+        <div class="callout info">
+          <strong>HTML5 deployment requirement</strong>
+          The hosted game now needs <code>story/encounters.json</code> alongside <code>index.html</code> and the
+          <code>web/</code> folder. Upload the <code>story/</code> folder when deploying the browser port.
+        </div>
+      </section>
+
+      <section id="mistakes">
+        <h2>Common mistakes</h2>
+        <table>
+          <thead><tr><th>Problem</th><th>What happens</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Missing <code>"user_added": true</code></td><td>The generator may erase the custom entry.</td><td>Add the field to every custom encounter.</td></tr>
+            <tr><td>ID does not match</td><td>The game reports an unknown encounter.</td><td>Make the object key, <code>id</code>, and <code>after_scene</code> value identical.</td></tr>
+            <tr><td>Enemy name is misspelled</td><td>Combat cannot find the monster.</td><td>Copy the exact lowercase name from <code>monsters</code>.</td></tr>
+            <tr><td>Missing comma</td><td>The entire JSON file fails to load.</td><td>Put commas between neighboring properties and objects, but not after the final one.</td></tr>
+            <tr><td>Added ID to <code>encounters</code></td><td>The addition may be overwritten and will not be executed as a custom encounter.</td><td>Add it to <code>after_scene</code>.</td></tr>
+            <tr><td>Edited generated monster stats</td><td>The displayed JSON changes, but actual combat may not.</td><td>Monster stats are not JSON-controlled yet.</td></tr>
+            <tr><td>Used JSON comments</td><td>The JSON parser fails.</td><td>Remove all <code>//</code>, <code>/* */</code>, and <code>#</code> comments.</td></tr>
+            <tr><td>Forgot to upload the story folder</td><td>The browser game fails while loading encounter data.</td><td>Deploy <code>story/encounters.json</code> with the HTML5 port.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Final checklist</h2>
+        <ul class="checklist">
+          <li>The custom object is inside <code>data_encounters</code>.</li>
+          <li>The object has <code>"user_added": true</code>.</li>
+          <li>The object key and its <code>id</code> are identical.</li>
+          <li>The enemy name already exists.</li>
+          <li>The ID is in exactly one intended scene's <code>after_scene</code> list.</li>
+          <li><code>python3 -m json.tool story/encounters.json</code> succeeds.</li>
+          <li>The battle is tested in both Python and HTML5.</li>
+        </ul>
+      </section>
+
+      <footer>Realmbound encounter documentation · Stored beside <code>story/encounters.json</code></footer>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.copy').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-wrap').querySelector('code').textContent;
+        try {
+          await navigator.clipboard.writeText(code);
+          const previous = button.textContent;
+          button.textContent = 'Copied';
+          setTimeout(() => { button.textContent = previous; }, 1200);
+        } catch {
+          button.textContent = 'Select and copy';
+        }
+      });
+    });
+
+    const navLinks = [...document.querySelectorAll('nav a')];
+    const sections = navLinks
+      .map((link) => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      navLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`);
+      });
+    }, { rootMargin: '-18% 0px -65% 0px', threshold: [0.01, 0.2, 0.5] });
+
+    sections.forEach((section) => observer.observe(section));
+  </script>
+</body>
+</html>
