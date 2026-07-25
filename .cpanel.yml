@@ -1,0 +1,7 @@
+---
+# This repository is checked out directly in public_html/Adventure-Game, so
+# Update from Remote already publishes the tracked files. This no-op task
+# satisfies cPanel deploy.
+deployment:
+  tasks:
+    - /bin/true

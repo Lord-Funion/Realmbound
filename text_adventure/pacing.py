@@ -107,7 +107,11 @@ def _paint_plain_message(message, kind):
         color = Fore.LIGHTYELLOW_EX + Style.BRIGHT
     elif "game over" in lowered or "damage" in lowered or "attacks" in lowered:
         color = Fore.LIGHTRED_EX
-    elif "good job" in lowered or "you learned" in lowered or "you bought" in lowered:
+    elif (
+        "good job" in lowered
+        or "you learned" in lowered
+        or "you bought" in lowered
+    ):
         color = Fore.LIGHTGREEN_EX
     elif "credits:" in lowered:
         color = Fore.LIGHTBLACK_EX
@@ -130,7 +134,12 @@ def say(message, kind="line"):
 
 def ask(prompt):
     """Read player input with normalized whitespace."""
-    painted_prompt = prompt if "\033[" in prompt else f"{Fore.LIGHTCYAN_EX}{prompt}{Style.RESET_ALL}"
+    painted_prompt = (
+        prompt
+        if "\033[" in prompt
+        else f"{Fore.LIGHTCYAN_EX}{prompt}{Style.RESET_ALL}"
+    )
+
     while True:
         value = " ".join(input(painted_prompt).strip().split())
         if maybe_open_quick_menu(value):
