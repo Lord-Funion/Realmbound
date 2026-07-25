@@ -1,13 +1,14 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "game": "Realmbound",
   "editing_help": {
     "add_encounter": [
-      "Copy or create an object in data_encounters.",
+      "Create an object in data_encounters with user_added true.",
       "Add its id to a scene after_scene list.",
-      "Python and HTML5 run that encounter automatically."
+      "Use battle, shop, church, sequence, choice, text, or reward steps.",
+      "Python and HTML5 run the same data automatically."
     ],
-    "note": "runs_from custom_scene means special logic remains in code; this file still lists it so the story is easy to read."
+    "note": "runs_from custom_scene marks older scene logic that is listed for reference; after_scene entries are fully data-driven."
   },
   "scene_order": [
     "intro",
@@ -53,7 +54,7 @@
       "summary": "The first goblin is a simple physical fight before spell combat begins.",
       "encounters": [
         {
-          "id": "first_goblin_gate_rat_1142",
+          "id": "first_goblin_gate_rat_1277",
           "type": "battle",
           "enemy": "gate rat",
           "runs_from": "custom_scene"
@@ -66,48 +67,48 @@
       "summary": "Save the village, receive a potion, and visit Gnome Depot.",
       "encounters": [
         {
-          "id": "village_troll_1157",
+          "id": "village_troll_1292",
           "type": "battle",
           "enemy": "troll",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_smoke_imp_1158",
+          "id": "village_smoke_imp_1293",
           "type": "battle",
           "enemy": "smoke imp",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_rest_1169",
+          "id": "village_rest_1304",
           "type": "rest",
           "name": "the Church of the Little Lantern",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_clocktower_scene_1175",
+          "id": "village_clocktower_scene_1310",
           "type": "secret_route",
           "destination": "clocktower",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_well_scene_1177",
+          "id": "village_well_scene_1312",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_shop_1185",
+          "id": "village_shop_1320",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_skeleton_1191",
+          "id": "village_skeleton_1326",
           "type": "battle",
           "enemy": "skeleton",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_curse_candle_1193",
+          "id": "village_curse_candle_1328",
           "type": "battle",
           "enemy": "curse candle",
           "runs_from": "custom_scene"
@@ -120,55 +121,57 @@
       "summary": "Forest fights and Miss Costalot's traveling shop.",
       "encounters": [
         {
-          "id": "forest_werewolf_1208",
+          "id": "forest_werewolf_1343",
           "type": "battle",
           "enemy": "werewolf",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_bramble_wolf_1210",
+          "id": "forest_bramble_wolf_1345",
           "type": "battle",
           "enemy": "bramble wolf",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_goblin_1221",
+          "id": "forest_goblin_1356",
           "type": "battle",
           "enemy": "goblin",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_treasure_mimic_1223",
+          "id": "forest_treasure_mimic_1358",
           "type": "battle",
           "enemy": "treasure mimic",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_shop_1231",
+          "id": "forest_shop_1366",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_well_scene_1234",
+          "id": "forest_well_scene_1369",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
         }
       ],
-      "after_scene": []
+      "after_scene": [
+        "mossy_lantern_church"
+      ]
     },
     "twin_doors": {
       "title": "Twin Doors",
       "summary": "Handle the left/right door branch and converge back to the main path.",
       "encounters": [
         {
-          "id": "twin_doors_ogre_1250",
+          "id": "twin_doors_ogre_1385",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
         },
         {
-          "id": "twin_doors_ogre_1263",
+          "id": "twin_doors_ogre_1398",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
@@ -181,13 +184,13 @@
       "summary": "Fight the witch guarding the way to the mountains.",
       "encounters": [
         {
-          "id": "witch_witch_1277",
+          "id": "witch_witch_1412",
           "type": "battle",
           "enemy": "witch",
           "runs_from": "custom_scene"
         },
         {
-          "id": "witch_curse_candle_1279",
+          "id": "witch_curse_candle_1414",
           "type": "battle",
           "enemy": "curse candle",
           "runs_from": "custom_scene"
@@ -200,13 +203,13 @@
       "summary": "Climb toward the final valley and meet colder trouble.",
       "encounters": [
         {
-          "id": "mountain_pass_ice_goblin_1295",
+          "id": "mountain_pass_ice_goblin_1430",
           "type": "battle",
           "enemy": "ice goblin",
           "runs_from": "custom_scene"
         },
         {
-          "id": "mountain_pass_snow_bat_1296",
+          "id": "mountain_pass_snow_bat_1431",
           "type": "battle",
           "enemy": "snow bat",
           "runs_from": "custom_scene"
@@ -219,30 +222,30 @@
       "summary": "A late-game market with weapons and stranger magic.",
       "encounters": [
         {
-          "id": "moonlit_market_rest_1314",
+          "id": "moonlit_market_rest_1449",
           "type": "rest",
           "name": "the Chapel of the Second Moon",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_shop_1315",
+          "id": "moonlit_market_shop_1450",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_shadow_knight_1321",
+          "id": "moonlit_market_shadow_knight_1456",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_receipt_wraith_1322",
+          "id": "moonlit_market_receipt_wraith_1457",
           "type": "battle",
           "enemy": "receipt wraith",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_clocktower_scene_1334",
+          "id": "moonlit_market_clocktower_scene_1469",
           "type": "secret_route",
           "destination": "clocktower",
           "runs_from": "custom_scene"
@@ -255,13 +258,13 @@
       "summary": "Sneak through the vampire castle and steal the final key.",
       "encounters": [
         {
-          "id": "vampire_castle_vampire_1345",
+          "id": "vampire_castle_vampire_1480",
           "type": "battle",
           "enemy": "vampire",
           "runs_from": "custom_scene"
         },
         {
-          "id": "vampire_castle_basement_bat_1346",
+          "id": "vampire_castle_basement_bat_1481",
           "type": "battle",
           "enemy": "basement bat",
           "runs_from": "custom_scene"
@@ -274,19 +277,19 @@
       "summary": "A long detour that looks like the end and is not the end.",
       "encounters": [
         {
-          "id": "false_throne_shadow_knight_1367",
+          "id": "false_throne_shadow_knight_1502",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "false_throne_sugar_golem_1368",
+          "id": "false_throne_sugar_golem_1503",
           "type": "battle",
           "enemy": "sugar golem",
           "runs_from": "custom_scene"
         },
         {
-          "id": "false_throne_shop_1378",
+          "id": "false_throne_shop_1513",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -298,19 +301,19 @@
       "summary": "The road down under the castle before the real last gate.",
       "encounters": [
         {
-          "id": "underkeep_ogre_1389",
+          "id": "underkeep_ogre_1524",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
         },
         {
-          "id": "underkeep_rust_rat_1390",
+          "id": "underkeep_rust_rat_1525",
           "type": "battle",
           "enemy": "rust rat",
           "runs_from": "custom_scene"
         },
         {
-          "id": "underkeep_well_scene_1403",
+          "id": "underkeep_well_scene_1538",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
@@ -323,19 +326,19 @@
       "summary": "A hidden side path with a slow clockwork quest.",
       "encounters": [
         {
-          "id": "clocktower_shadow_knight_1414",
+          "id": "clocktower_shadow_knight_1549",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "clocktower_rust_rat_1415",
+          "id": "clocktower_rust_rat_1550",
           "type": "battle",
           "enemy": "rust rat",
           "runs_from": "custom_scene"
         },
         {
-          "id": "clocktower_shop_1425",
+          "id": "clocktower_shop_1560",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -346,36 +349,38 @@
       "title": "Old Well",
       "summary": "A tiny hidden quest that looks like nothing.",
       "encounters": [],
-      "after_scene": []
+      "after_scene": [
+        "last_chance_caravan"
+      ]
     },
     "hundred_day_road": {
       "title": "The Hundred-Day Road",
       "summary": "A long required expedition through the realm's sealed outer roads.",
       "encounters": [
         {
-          "id": "hundred_day_road_rest_1469",
+          "id": "hundred_day_road_rest_1604",
           "type": "rest",
           "name": "Church",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1470",
+          "id": "hundred_day_road_shop_1605",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_rest_1481",
+          "id": "hundred_day_road_rest_1616",
           "type": "rest",
           "name": "Church",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1486",
+          "id": "hundred_day_road_shop_1621",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1520",
+          "id": "hundred_day_road_shop_1655",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -387,30 +392,30 @@
       "summary": "Prepare at the dragon forge and open the last gate.",
       "encounters": [
         {
-          "id": "dragon_gate_rest_1527",
+          "id": "dragon_gate_rest_1662",
           "type": "rest",
           "name": "the Church of the Last Door",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_shop_1530",
+          "id": "dragon_gate_shop_1665",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_glass_cobra_1532",
+          "id": "dragon_gate_glass_cobra_1667",
           "type": "battle",
           "enemy": "glass cobra",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_crystal_dragon_1543",
+          "id": "dragon_gate_crystal_dragon_1678",
           "type": "battle",
           "enemy": "crystal dragon",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_crown_wraith_1544",
+          "id": "dragon_gate_crown_wraith_1679",
           "type": "battle",
           "enemy": "crown wraith",
           "runs_from": "custom_scene"
@@ -423,7 +428,7 @@
       "summary": "Face the dragon that has been holding the realm together by force.",
       "encounters": [
         {
-          "id": "final_battle_realmbound_dragon_1579",
+          "id": "final_battle_realmbound_dragon_1714",
           "type": "battle",
           "enemy": "realmbound dragon",
           "runs_from": "custom_scene"
@@ -433,8 +438,52 @@
     }
   },
   "data_encounters": {
-    "first_goblin_gate_rat_1142": {
-      "id": "first_goblin_gate_rat_1142",
+    "mossy_lantern_church": {
+      "id": "mossy_lantern_church",
+      "name": "Church of the Mossy Lantern",
+      "scene": "forest",
+      "user_added": true,
+      "type": "church",
+      "intro": [
+        "A tiny stone church glows between the trees."
+      ],
+      "prompt": "Go inside the Church of the Mossy Lantern? (yes/no): ",
+      "optional": true,
+      "enter_text": [
+        "The caretaker offers bread, water, and a quiet wooden pew."
+      ],
+      "decline_text": [
+        "You wave to the caretaker and stay on the forest road."
+      ],
+      "restore": {
+        "health": "full",
+        "mana": "full"
+      },
+      "rest_text": "You leave fully restored and considerably less doomed."
+    },
+    "last_chance_caravan": {
+      "id": "last_chance_caravan",
+      "name": "Last-Chance Caravan",
+      "scene": "well",
+      "user_added": true,
+      "type": "shop",
+      "intro": [
+        "A supply caravan waits before the Hundred-Day Road."
+      ],
+      "prompt": "Stop at the Last-Chance Caravan? (yes/no): ",
+      "optional": true,
+      "advanced": true,
+      "legendary": false,
+      "enter_text": [
+        "The merchant opens every crate and tells you not to be heroic on an empty backpack."
+      ],
+      "decline_text": [
+        "You keep walking. The merchant shouts that the offer still stands."
+      ],
+      "leave_text": "You leave the caravan and face the long road."
+    },
+    "first_goblin_gate_rat_1277": {
+      "id": "first_goblin_gate_rat_1277",
       "name": "Gate Rat",
       "scene": "first_goblin",
       "type": "battle",
@@ -453,8 +502,8 @@
         "offer_potions": true
       }
     },
-    "village_smoke_imp_1158": {
-      "id": "village_smoke_imp_1158",
+    "village_smoke_imp_1293": {
+      "id": "village_smoke_imp_1293",
       "name": "Smoke Imp",
       "scene": "village",
       "type": "battle",
@@ -473,8 +522,8 @@
         "offer_potions": true
       }
     },
-    "village_curse_candle_1193": {
-      "id": "village_curse_candle_1193",
+    "village_curse_candle_1328": {
+      "id": "village_curse_candle_1328",
       "name": "Curse Candle",
       "scene": "village",
       "type": "battle",
@@ -493,8 +542,8 @@
         "offer_potions": true
       }
     },
-    "forest_bramble_wolf_1210": {
-      "id": "forest_bramble_wolf_1210",
+    "forest_bramble_wolf_1345": {
+      "id": "forest_bramble_wolf_1345",
       "name": "Bramble Wolf",
       "scene": "forest",
       "type": "battle",
@@ -513,8 +562,8 @@
         "offer_potions": true
       }
     },
-    "forest_treasure_mimic_1223": {
-      "id": "forest_treasure_mimic_1223",
+    "forest_treasure_mimic_1358": {
+      "id": "forest_treasure_mimic_1358",
       "name": "Treasure Mimic",
       "scene": "forest",
       "type": "battle",
@@ -533,8 +582,8 @@
         "offer_potions": true
       }
     },
-    "witch_curse_candle_1279": {
-      "id": "witch_curse_candle_1279",
+    "witch_curse_candle_1414": {
+      "id": "witch_curse_candle_1414",
       "name": "Curse Candle",
       "scene": "witch",
       "type": "battle",
@@ -553,8 +602,8 @@
         "offer_potions": true
       }
     },
-    "mountain_pass_snow_bat_1296": {
-      "id": "mountain_pass_snow_bat_1296",
+    "mountain_pass_snow_bat_1431": {
+      "id": "mountain_pass_snow_bat_1431",
       "name": "Snow Bat",
       "scene": "mountain_pass",
       "type": "battle",
@@ -573,8 +622,8 @@
         "offer_potions": true
       }
     },
-    "moonlit_market_receipt_wraith_1322": {
-      "id": "moonlit_market_receipt_wraith_1322",
+    "moonlit_market_receipt_wraith_1457": {
+      "id": "moonlit_market_receipt_wraith_1457",
       "name": "Receipt Wraith",
       "scene": "moonlit_market",
       "type": "battle",
@@ -593,8 +642,8 @@
         "offer_potions": true
       }
     },
-    "vampire_castle_basement_bat_1346": {
-      "id": "vampire_castle_basement_bat_1346",
+    "vampire_castle_basement_bat_1481": {
+      "id": "vampire_castle_basement_bat_1481",
       "name": "Basement Bat",
       "scene": "vampire_castle",
       "type": "battle",
@@ -613,8 +662,8 @@
         "offer_potions": true
       }
     },
-    "false_throne_sugar_golem_1368": {
-      "id": "false_throne_sugar_golem_1368",
+    "false_throne_sugar_golem_1503": {
+      "id": "false_throne_sugar_golem_1503",
       "name": "Sugar Golem",
       "scene": "false_throne",
       "type": "battle",
@@ -633,8 +682,8 @@
         "offer_potions": true
       }
     },
-    "underkeep_rust_rat_1390": {
-      "id": "underkeep_rust_rat_1390",
+    "underkeep_rust_rat_1525": {
+      "id": "underkeep_rust_rat_1525",
       "name": "Rust Rat",
       "scene": "underkeep",
       "type": "battle",
@@ -653,8 +702,8 @@
         "offer_potions": true
       }
     },
-    "clocktower_rust_rat_1415": {
-      "id": "clocktower_rust_rat_1415",
+    "clocktower_rust_rat_1550": {
+      "id": "clocktower_rust_rat_1550",
       "name": "Rust Rat",
       "scene": "clocktower",
       "type": "battle",
@@ -673,8 +722,8 @@
         "offer_potions": true
       }
     },
-    "dragon_gate_glass_cobra_1532": {
-      "id": "dragon_gate_glass_cobra_1532",
+    "dragon_gate_glass_cobra_1667": {
+      "id": "dragon_gate_glass_cobra_1667",
       "name": "Glass Cobra",
       "scene": "dragon_gate",
       "type": "battle",
@@ -693,8 +742,8 @@
         "offer_potions": true
       }
     },
-    "dragon_gate_crown_wraith_1544": {
-      "id": "dragon_gate_crown_wraith_1544",
+    "dragon_gate_crown_wraith_1679": {
+      "id": "dragon_gate_crown_wraith_1679",
       "name": "Crown Wraith",
       "scene": "dragon_gate",
       "type": "battle",
@@ -716,671 +765,745 @@
   },
   "monsters": {
     "goblin": {
-      "health": 32,
-      "damage": 8,
+      "health": 30,
+      "damage": 6,
       "attacks": [
         "punch",
         "screech",
         "headbutt"
-      ]
+      ],
+      "reward": 9
     },
     "troll": {
-      "health": 52,
-      "damage": 12,
+      "health": 46,
+      "damage": 8,
       "attacks": [
         "club",
         "slam",
         "bite"
-      ]
+      ],
+      "reward": 12
     },
     "skeleton": {
-      "health": 36,
-      "damage": 15,
+      "health": 34,
+      "damage": 8,
       "attacks": [
         "bone club",
         "bone scare",
         "bone headbutt"
-      ]
+      ],
+      "reward": 10
     },
     "werewolf": {
-      "health": 68,
-      "damage": 18,
+      "health": 54,
+      "damage": 9,
       "attacks": [
         "claw",
         "bite",
         "howl"
-      ]
+      ],
+      "reward": 13
     },
     "ogre": {
-      "health": 86,
-      "damage": 24,
+      "health": 68,
+      "damage": 11,
       "attacks": [
         "big club",
         "super smash",
         "stomp"
-      ]
+      ],
+      "reward": 16
     },
     "witch": {
-      "health": 64,
-      "damage": 16,
+      "health": 58,
+      "damage": 10,
       "attacks": [
         "poison",
         "curse",
         "hex"
-      ]
+      ],
+      "reward": 15
     },
     "vampire": {
-      "health": 82,
-      "damage": 21,
+      "health": 70,
+      "damage": 12,
       "attacks": [
         "transform into bat",
         "fangs",
         "suck blood"
-      ]
+      ],
+      "reward": 18
     },
     "gate rat": {
       "health": 22,
-      "damage": 7,
+      "damage": 5,
       "attacks": [
         "rusty nibble",
         "ankle dash",
         "tiny ambush"
-      ]
+      ],
+      "reward": 8
     },
     "smoke imp": {
-      "health": 38,
-      "damage": 10,
+      "health": 32,
+      "damage": 7,
       "attacks": [
         "soot slap",
         "ember pinch",
         "smoke cough"
-      ]
+      ],
+      "reward": 10
     },
     "bramble wolf": {
-      "health": 54,
-      "damage": 16,
+      "health": 44,
+      "damage": 8,
       "attacks": [
         "thorn bite",
         "vine trip",
         "bark howl"
-      ]
+      ],
+      "reward": 11
     },
     "treasure mimic": {
-      "health": 58,
-      "damage": 18,
+      "health": 48,
+      "damage": 9,
       "attacks": [
         "lid snap",
         "coin spit",
         "hinge bash"
-      ]
+      ],
+      "reward": 14
     },
     "curse candle": {
-      "health": 45,
-      "damage": 17,
+      "health": 40,
+      "damage": 8,
       "attacks": [
         "wax splash",
         "blue flame",
         "bad birthday wish"
-      ]
+      ],
+      "reward": 11
     },
     "ice goblin": {
-      "health": 72,
-      "damage": 20,
+      "health": 60,
+      "damage": 10,
       "attacks": [
         "snowball uppercut",
         "icicle jab",
         "freezing giggle"
-      ]
+      ],
+      "reward": 15
     },
     "snow bat": {
-      "health": 48,
-      "damage": 17,
+      "health": 42,
+      "damage": 8,
       "attacks": [
         "frost bite",
         "wing slap",
         "sleet shriek"
-      ]
+      ],
+      "reward": 11
     },
     "shadow knight": {
-      "health": 95,
-      "damage": 25,
+      "health": 76,
+      "damage": 12,
       "attacks": [
         "gloom slash",
         "helmet bonk",
         "midnight shove"
-      ]
+      ],
+      "reward": 18
     },
     "receipt wraith": {
-      "health": 62,
-      "damage": 19,
+      "health": 52,
+      "damage": 9,
       "attacks": [
         "paper cut",
         "late fee",
         "ink cloud"
-      ]
+      ],
+      "reward": 13
     },
     "basement bat": {
-      "health": 58,
-      "damage": 18,
+      "health": 48,
+      "damage": 9,
       "attacks": [
         "cape flutter",
         "fang tap",
         "ceiling dive"
-      ]
+      ],
+      "reward": 12
     },
     "sugar golem": {
-      "health": 105,
-      "damage": 27,
+      "health": 86,
+      "damage": 13,
       "attacks": [
         "frosting fist",
         "sprinkle storm",
         "cookie crumble"
-      ]
+      ],
+      "reward": 20
     },
     "rust rat": {
-      "health": 66,
-      "damage": 20,
+      "health": 54,
+      "damage": 9,
       "attacks": [
         "rust bite",
         "pipe scramble",
         "gear squeak"
-      ]
+      ],
+      "reward": 13
     },
     "glass cobra": {
-      "health": 88,
-      "damage": 28,
+      "health": 72,
+      "damage": 12,
       "attacks": [
         "mirror fang",
         "shatter hiss",
         "scale flash"
-      ]
+      ],
+      "reward": 18
     },
     "crystal dragon": {
-      "health": 145,
-      "damage": 32,
+      "health": 108,
+      "damage": 14,
       "attacks": [
         "rainbow sneeze",
         "crystal claw",
         "tail prism"
-      ]
+      ],
+      "reward": 30
     },
     "crown wraith": {
-      "health": 110,
-      "damage": 30,
+      "health": 88,
+      "damage": 13,
       "attacks": [
         "royal glare",
         "cold decree",
         "crown toss"
-      ]
+      ],
+      "reward": 24
     },
     "lord dreadbiscuit": {
-      "health": 180,
-      "damage": 36,
+      "health": 120,
+      "damage": 16,
       "attacks": [
         "crumb storm",
         "butter curse",
         "ego blast"
-      ]
+      ],
+      "reward": 35
     },
     "realmbound dragon": {
-      "health": 260,
-      "damage": 42,
+      "health": 150,
+      "damage": 18,
       "attacks": [
         "starfire breath",
         "crownquake",
         "eclipse wingstorm",
         "ancient claw"
-      ]
+      ],
+      "reward": 60
     },
     "ashfall pilgrim": {
-      "health": 96,
-      "damage": 23,
+      "health": 49,
+      "damage": 6,
       "attacks": [
         "ember staff",
         "cinder prayer",
         "ash cloak"
-      ]
+      ],
+      "reward": 10
     },
     "lantern jackal": {
-      "health": 100,
-      "damage": 24,
+      "health": 50,
+      "damage": 6,
       "attacks": [
         "lamp bite",
         "oil slick",
         "howling flare"
-      ]
+      ],
+      "reward": 10
     },
     "mossbound knight": {
-      "health": 108,
-      "damage": 25,
+      "health": 51,
+      "damage": 6,
       "attacks": [
         "root shield",
         "green blade",
         "helmet sprout"
-      ]
+      ],
+      "reward": 10
     },
     "mirror moth": {
-      "health": 92,
-      "damage": 26,
+      "health": 52,
+      "damage": 6,
       "attacks": [
         "glass wing",
         "reflection flash",
         "powder dazzle"
-      ]
+      ],
+      "reward": 10
     },
     "ember librarian": {
-      "health": 112,
-      "damage": 27,
+      "health": 54,
+      "damage": 6,
       "attacks": [
         "burning bookmark",
         "shushing flame",
         "index curse"
-      ]
+      ],
+      "reward": 10
     },
     "fogbank siren": {
-      "health": 116,
-      "damage": 28,
+      "health": 55,
+      "damage": 6,
       "attacks": [
         "mist song",
         "harbor pull",
         "whiteout whisper"
-      ]
+      ],
+      "reward": 11
     },
     "tin crown bandit": {
-      "health": 120,
-      "damage": 29,
+      "health": 56,
+      "damage": 6,
       "attacks": [
         "fake decree",
         "coin knife",
         "royal shove"
-      ]
+      ],
+      "reward": 11
     },
     "hollow beekeeper": {
-      "health": 124,
-      "damage": 30,
+      "health": 57,
+      "damage": 6,
       "attacks": [
         "wax veil",
         "hive rattle",
         "stinger rain"
-      ]
+      ],
+      "reward": 11
     },
     "moonlit scarecrow": {
-      "health": 128,
-      "damage": 31,
+      "health": 58,
+      "damage": 6,
       "attacks": [
         "straw jab",
         "moon grin",
         "field hex"
-      ]
+      ],
+      "reward": 11
     },
     "iron acorn brute": {
-      "health": 136,
-      "damage": 32,
+      "health": 59,
+      "damage": 6,
       "attacks": [
         "oak punch",
         "iron shell",
         "squirrel panic"
-      ]
+      ],
+      "reward": 11
     },
     "velvet gargoyle": {
-      "health": 132,
-      "damage": 33,
+      "health": 60,
+      "damage": 6,
       "attacks": [
         "soft stone claw",
         "curtain dive",
         "balcony crash"
-      ]
+      ],
+      "reward": 12
     },
     "clockwork eel": {
-      "health": 118,
-      "damage": 34,
+      "health": 61,
+      "damage": 6,
       "attacks": [
         "gear bite",
         "static coil",
         "spring lash"
-      ]
+      ],
+      "reward": 12
     },
     "glacier monk": {
-      "health": 140,
-      "damage": 35,
+      "health": 62,
+      "damage": 7,
       "attacks": [
         "frozen palm",
         "silent avalanche",
         "ice mantra"
-      ]
+      ],
+      "reward": 12
     },
     "briar drummer": {
-      "health": 126,
-      "damage": 36,
+      "health": 63,
+      "damage": 7,
       "attacks": [
         "thorn rhythm",
         "snare root",
         "wild tempo"
-      ]
+      ],
+      "reward": 12
     },
     "marble banshee": {
-      "health": 144,
-      "damage": 37,
+      "health": 64,
+      "damage": 7,
       "attacks": [
         "statue shriek",
         "grave echo",
         "cracked aria"
-      ]
+      ],
+      "reward": 12
     },
     "thunder yak": {
-      "health": 150,
-      "damage": 38,
+      "health": 66,
+      "damage": 7,
       "attacks": [
         "storm charge",
         "horn thunder",
         "cloud stomp"
-      ]
+      ],
+      "reward": 13
     },
     "paper lantern fiend": {
-      "health": 122,
-      "damage": 39,
+      "health": 67,
+      "damage": 7,
       "attacks": [
         "paper flame",
         "festival fright",
         "string snare"
-      ]
+      ],
+      "reward": 13
     },
     "copper wyvern": {
-      "health": 156,
-      "damage": 40,
+      "health": 68,
+      "damage": 7,
       "attacks": [
         "coin-scale rake",
         "green fire",
         "roof snatch"
-      ]
+      ],
+      "reward": 13
     },
     "old road revenant": {
-      "health": 148,
-      "damage": 41,
+      "health": 69,
+      "damage": 7,
       "attacks": [
         "mile marker",
         "dust hand",
         "forgotten shortcut"
-      ]
+      ],
+      "reward": 13
     },
     "saltwater specter": {
-      "health": 152,
-      "damage": 42,
+      "health": 70,
+      "damage": 7,
       "attacks": [
         "brine wave",
         "anchor chill",
         "shipbell howl"
-      ]
+      ],
+      "reward": 13
     },
     "orchard mimic": {
-      "health": 160,
-      "damage": 43,
+      "health": 71,
+      "damage": 7,
       "attacks": [
         "apple snap",
         "branch disguise",
         "basket bite"
-      ]
+      ],
+      "reward": 14
     },
     "candlewax duelist": {
-      "health": 146,
-      "damage": 44,
+      "health": 72,
+      "damage": 7,
       "attacks": [
         "wick rapier",
         "melting feint",
         "flame salute"
-      ]
+      ],
+      "reward": 14
     },
     "rune-tusk boar": {
-      "health": 168,
-      "damage": 45,
+      "health": 73,
+      "damage": 7,
       "attacks": [
         "glyph gore",
         "mud ward",
         "tusk spell"
-      ]
+      ],
+      "reward": 14
     },
     "midnight tax collector": {
-      "health": 154,
-      "damage": 46,
+      "health": 74,
+      "damage": 7,
       "attacks": [
         "late fee",
         "receipt lash",
         "audit glare"
-      ]
+      ],
+      "reward": 14
     },
     "feathered basilisk": {
-      "health": 162,
-      "damage": 47,
+      "health": 76,
+      "damage": 8,
       "attacks": [
         "plume stare",
         "stone chirp",
         "talon flash"
-      ]
+      ],
+      "reward": 14
     },
     "broken compass spirit": {
-      "health": 158,
-      "damage": 48,
+      "health": 77,
+      "damage": 8,
       "attacks": [
         "northless pull",
         "needle spin",
         "lost road"
-      ]
+      ],
+      "reward": 15
     },
     "jewel wasp swarm": {
-      "health": 170,
-      "damage": 49,
+      "health": 78,
+      "damage": 8,
       "attacks": [
         "ruby sting",
         "buzzing crown",
         "gem cloud"
-      ]
+      ],
+      "reward": 15
     },
     "singing stump": {
-      "health": 166,
-      "damage": 50,
+      "health": 79,
+      "damage": 8,
       "attacks": [
         "root chorus",
         "bark note",
         "splinter solo"
-      ]
+      ],
+      "reward": 15
     },
     "blackglass panther": {
-      "health": 176,
-      "damage": 51,
+      "health": 80,
+      "damage": 8,
       "attacks": [
         "mirror pounce",
         "shadow claw",
         "glass growl"
-      ]
+      ],
+      "reward": 15
     },
     "sunken bell knight": {
-      "health": 184,
-      "damage": 52,
+      "health": 81,
+      "damage": 8,
       "attacks": [
         "drowned chime",
         "rusted lance",
         "undertow step"
-      ]
+      ],
+      "reward": 15
     },
     "nettle witchling": {
-      "health": 172,
-      "damage": 53,
+      "health": 82,
+      "damage": 8,
       "attacks": [
         "sting charm",
         "green hex",
         "thorn wink"
-      ]
+      ],
+      "reward": 16
     },
     "storm cellar troll": {
-      "health": 190,
-      "damage": 54,
+      "health": 83,
+      "damage": 8,
       "attacks": [
         "barrel throw",
         "basement boom",
         "storm burp"
-      ]
+      ],
+      "reward": 16
     },
     "silver mask rogue": {
-      "health": 178,
-      "damage": 55,
+      "health": 84,
+      "damage": 8,
       "attacks": [
         "mask flash",
         "quiet dagger",
         "vanishing bow"
-      ]
+      ],
+      "reward": 16
     },
     "bonewheel racer": {
-      "health": 182,
-      "damage": 56,
+      "health": 85,
+      "damage": 8,
       "attacks": [
         "wheel crash",
         "rib spoke",
         "graveyard lap"
-      ]
+      ],
+      "reward": 16
     },
     "spellbook leech": {
-      "health": 188,
-      "damage": 57,
+      "health": 86,
+      "damage": 8,
       "attacks": [
         "page drain",
         "ink bite",
         "borrowed spell"
-      ]
+      ],
+      "reward": 16
     },
     "cloud anvil giant": {
-      "health": 208,
-      "damage": 58,
+      "health": 88,
+      "damage": 8,
       "attacks": [
         "sky hammer",
         "anvil drop",
         "forge thunder"
-      ]
+      ],
+      "reward": 17
     },
     "porcelain hydra": {
-      "health": 202,
-      "damage": 59,
+      "health": 89,
+      "damage": 9,
       "attacks": [
         "china fang",
         "teacup roar",
         "seven saucers"
-      ]
+      ],
+      "reward": 17
     },
     "scarecrow magistrate": {
-      "health": 194,
-      "damage": 60,
+      "health": 90,
+      "damage": 9,
       "attacks": [
         "field warrant",
         "straw verdict",
         "gavel stick"
-      ]
+      ],
+      "reward": 17
     },
     "obsidian choir": {
-      "health": 210,
-      "damage": 61,
+      "health": 91,
+      "damage": 9,
       "attacks": [
         "black hymn",
         "shard harmony",
         "echo cut"
-      ]
+      ],
+      "reward": 17
     },
     "frostroot colossus": {
-      "health": 224,
-      "damage": 62,
+      "health": 92,
+      "damage": 9,
       "attacks": [
         "winter branch",
         "rootquake",
         "snow crown"
-      ]
+      ],
+      "reward": 17
     },
     "honeycomb horror": {
-      "health": 198,
-      "damage": 63,
+      "health": 93,
+      "damage": 9,
       "attacks": [
         "sticky maw",
         "hexagon swarm",
         "golden sting"
-      ]
+      ],
+      "reward": 18
     },
     "brass cathedral rook": {
-      "health": 218,
-      "damage": 64,
+      "health": 94,
+      "damage": 9,
       "attacks": [
         "bell tower dive",
         "brass wing",
         "sanctuary slam"
-      ]
+      ],
+      "reward": 18
     },
     "map-eating serpent": {
-      "health": 206,
-      "damage": 65,
+      "health": 95,
+      "damage": 9,
       "attacks": [
         "cartography bite",
         "folded coil",
         "legend swallow"
-      ]
+      ],
+      "reward": 18
     },
     "velvet thunderlord": {
-      "health": 230,
-      "damage": 66,
+      "health": 96,
+      "damage": 9,
       "attacks": [
         "royal thunder",
         "soft lightning",
         "storm decree"
-      ]
+      ],
+      "reward": 18
     },
     "eclipse ferryman": {
-      "health": 220,
-      "damage": 67,
+      "health": 98,
+      "damage": 9,
       "attacks": [
         "black oar",
         "river shadow",
         "fare curse"
-      ]
+      ],
+      "reward": 18
     },
     "crownless lion": {
-      "health": 236,
-      "damage": 68,
+      "health": 99,
+      "damage": 9,
       "attacks": [
         "mane flare",
         "throne roar",
         "claw decree"
-      ]
+      ],
+      "reward": 19
     },
     "dream ash phantom": {
-      "health": 214,
-      "damage": 69,
+      "health": 100,
+      "damage": 9,
       "attacks": [
         "sleep cinder",
         "nightmare veil",
         "pillow grave"
-      ]
+      ],
+      "reward": 19
     },
     "seven-key jailer": {
-      "health": 242,
-      "damage": 70,
+      "health": 101,
+      "damage": 9,
       "attacks": [
         "keyring crush",
         "cell door slam",
         "warden glare"
-      ]
+      ],
+      "reward": 19
     },
     "realmquake titan": {
-      "health": 260,
-      "damage": 72,
+      "health": 102,
+      "damage": 10,
       "attacks": [
         "continent stomp",
         "fault line",
         "mountain backhand"
-      ]
+      ],
+      "reward": 19
     },
     "calendar dragon": {
-      "health": 280,
-      "damage": 74,
+      "health": 103,
+      "damage": 10,
       "attacks": [
         "lost month",
         "deadline flame",
         "year-end wing"
-      ]
+      ],
+      "reward": 19
     }
   },
   "sequences": {

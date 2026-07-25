@@ -165,7 +165,7 @@ def _buy_frog_training(player, stock, stock_name, price, power=0, energy=0):
     say(f"You have {money_text(player['money'])} left.", "quick")
 
 
-def run_shop(player, stock, advanced=False, legendary=False):
+def run_shop(player, stock, advanced=False, legendary=False, title="Shop Menu", leave_text="You leave the store."):
     """Run Harold's or Miss Costalot's shop menu."""
     sell_scraps(player)
 
@@ -189,7 +189,7 @@ def run_shop(player, stock, advanced=False, legendary=False):
                 "2",
                 "Small Health Potion",
                 "small_potion",
-                f"{money_text(28)} - heals 15 health",
+                f"{money_text(28)} - heals 30 health",
                 aliases=("small", "small potion", "health potion", "potion"),
                 status=_price_status(player, 28),
             ),
@@ -382,7 +382,7 @@ def run_shop(player, stock, advanced=False, legendary=False):
             f"Mana: {stat_meter(player['mana'], player['manaMax'])} "
             f"{player['mana']}/{player['manaMax']}"
         )
-        choice = choose_menu("Shop Menu", options, prompt="Shop choice: ", subtitle=subtitle)
+        choice = choose_menu(title, options, prompt="Shop choice: ", subtitle=subtitle)
 
         if choice == "arcane":
             _buy_spell(player, stock, "Arcane Blast", 45)
@@ -417,5 +417,5 @@ def run_shop(player, stock, advanced=False, legendary=False):
         elif choice == "solar_beam":
             _buy_spell(player, stock, "Solar Beam", 240)
         elif choice == "leave":
-            say("\nYou leave the store.", "quick")
+            say(f"\n{leave_text}", "quick")
             return

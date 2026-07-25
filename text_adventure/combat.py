@@ -8,8 +8,8 @@ from .terminal_colors import Fore, Style
 from .ui import MenuOption, choose_menu, money_text, stat_meter
 
 
-BASE_BASIC_DAMAGE = 4
-STATUS_DAMAGE = 5
+BASE_BASIC_DAMAGE = 8
+STATUS_DAMAGE = 4
 
 
 class GameOver(Exception):
@@ -38,7 +38,7 @@ def _monster_attack(monster_name, monster, player):
 
 
 def _basic_damage(player):
-    return BASE_BASIC_DAMAGE + player.get("weaponDamage", 0)
+    return BASE_BASIC_DAMAGE + player.get("weaponDamage", 0) + player.get("roadProgress", 0) // 5
 
 
 def _try_combat_revive(player):
@@ -279,15 +279,29 @@ def spell_fight(monster_name, player):
 
 
 def win_fight(monster_name, player):
-    """Give the player rewards after a victory."""
+    """Give reliable rewards and enough recovery to prevent unwinnable attrition."""
     say(f"The {monster_name} has been defeated!", "beat")
-    reward = random.randint(4, 9)
+    monster = MONSTERS[monster_name]
+    reward = int(monster.get("reward", 10))
     player["money"] += reward
     drop = random.choice(LOOT_DROPS)
     player["backpack"].append(drop)
+
+    health_gain = min(max(18, player["healthMax"] // 6), player["healthMax"] - player["health"])
+    mana_gain = min(max(15, player["manaMax"] // 8), player["manaMax"] - player["mana"])
+    player["health"] += max(0, health_gain)
+    player["mana"] += max(0, mana_gain)
     if player.get("frogMode"):
-        player["frogEnergy"] = min(player["frogEnergyMax"], player["frogEnergy"] + 4)
+        player["frogEnergy"] = min(player["frogEnergyMax"], player["frogEnergy"] + 8)
+
     say(f"You gained {money_text(reward)} and found a {drop}.")
+    if health_gain or mana_gain:
+        say(
+            f"You catch your breath: health +{max(0, health_gain)}, "
+            f"mana +{max(0, mana_gain)}.",
+            "quick",
+        )
+
 
 
 def game_over(player):

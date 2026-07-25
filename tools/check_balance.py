@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """Static fairness checks for Realmbound's required combat path."""
 from __future__ import annotations
-
 import math
-
 from text_adventure.combat import BASE_BASIC_DAMAGE
 from text_adventure.data import LONG_ROAD_ENEMIES, MONSTERS
 from text_adventure.encounter_data import load
@@ -29,10 +27,7 @@ assert min(monster["reward"] for monster in MONSTERS.values()) >= 8
 
 story = load()
 assert story["schema_version"] >= 2
-for encounter_id, expected_type in (
-    ("mossy_lantern_church", "church"),
-    ("last_chance_caravan", "shop"),
-):
+for encounter_id, expected_type in (("mossy_lantern_church", "church"), ("last_chance_caravan", "shop")):
     assert story["data_encounters"][encounter_id]["type"] == expected_type
     scene_id = story["data_encounters"][encounter_id]["scene"]
     assert encounter_id in story["scenes"][scene_id]["after_scene"]

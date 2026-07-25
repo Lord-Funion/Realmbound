@@ -690,24 +690,159 @@ def _run_scene(scene_id, player, shop_stock):
         raise SaveError("Unknown story checkpoint.")
 
     for encounter_id in additions(scene_id):
-        _run_json_encounter(encounter_id, player)
+        _run_json_encounter(encounter_id, player, shop_stock)
 
 
-def _run_json_encounter(encounter_id, player):
-    entry = encounter(encounter_id)
-    for line in entry.get("intro", []): say("\n" + line, "beat")
-    if entry.get("type") == "battle":
-        if entry.get("choice") == "fight_or_run" and fight_or_run() == "run":
-            result = entry.get("run", {})
-            if result.get("text"): say("\n" + result["text"], "beat")
-            if result.get("game_over"): game_over(player)
-            return
-        spell_fight(entry["enemy"], player)
-    for reward in entry.get("victory", {}).get("rewards", []):
-        if "item" in reward: player["backpack"].append(reward["item"])
+def _json_lines(value):
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, list):
+        return [str(line) for line in value]
+    return [str(value)]
+
+
+def _show_json_text(value, pace="beat"):
+    for line in _json_lines(value):
+        if line:
+            say("\n" + line, pace)
+
+
+def _json_money(value):
+    if isinstance(value, dict):
+        return random.randint(int(value.get("min", 0)), int(value.get("max", 0)))
+    return int(value)
+
+
+def _apply_json_rewards(rewards, player):
+    for reward in rewards or []:
+        if not isinstance(reward, dict):
+            continue
+        if "item" in reward:
+            player["backpack"].append(str(reward["item"]))
         if "money" in reward:
-            value=reward["money"]; amount=random.randint(value["min"],value["max"]) if isinstance(value,dict) else int(value); player["money"]+=amount
-    if entry.get("victory", {}).get("offer_potions"): offer_potions(player)
+            amount = _json_money(reward["money"])
+            player["money"] += amount
+            say(f"\nYou receive {money_text(amount)}.", "quick")
+        if "health" in reward:
+            amount = max(0, int(reward["health"]))
+            gained = min(amount, player["healthMax"] - player["health"])
+            player["health"] += gained
+            say(f"\nHealth +{gained}.", "quick")
+        if "mana" in reward:
+            amount = max(0, int(reward["mana"]))
+            gained = min(amount, player["manaMax"] - player["mana"])
+            player["mana"] += gained
+            say(f"\nMana +{gained}.", "quick")
+
+
+def _restore_json_player(player, restore):
+    restore = restore if isinstance(restore, dict) else {"health": "full", "mana": "full"}
+    gains = {}
+    for stat, maximum in (("health", "healthMax"), ("mana", "manaMax")):
+        value = restore.get(stat)
+        if value is None:
+            gains[stat] = 0
+            continue
+        before = player[stat]
+        if value == "full":
+            player[stat] = player[maximum]
+        else:
+            player[stat] = min(player[maximum], player[stat] + max(0, int(value)))
+        gains[stat] = player[stat] - before
+    return gains
+
+
+def _run_json_step(step, player, shop_stock):
+    if not isinstance(step, dict):
+        raise SaveError("A custom encounter step must be an object.")
+
+    step_type = step.get("type", "text")
+    if step_type == "sequence":
+        _show_json_text(step.get("intro"))
+        _run_json_steps(step.get("steps", []), player, shop_stock)
+        return
+
+    if step_type == "text":
+        _show_json_text(step.get("text", step.get("lines")))
+        return
+
+    if step_type == "choice":
+        _show_json_text(step.get("intro"))
+        answer = yes_no(step.get("prompt", "\nDo you continue? (yes/no): "))
+        _run_json_steps(step.get(answer, []), player, shop_stock)
+        return
+
+    if step_type == "battle":
+        _show_json_text(step.get("intro"))
+        if step.get("choice") == "fight_or_run" and fight_or_run(step.get("prompt", "\nDo you fight or run? ")) == "run":
+            result = step.get("run", {})
+            _show_json_text(result.get("text"))
+            if result.get("game_over"):
+                game_over(player)
+            return
+        spell_fight(step["enemy"], player)
+        victory = step.get("victory", {})
+        _apply_json_rewards(victory.get("rewards", []), player)
+        _show_json_text(victory.get("text"), "quick")
+        if victory.get("offer_potions"):
+            offer_potions(player)
+        return
+
+    if step_type == "shop":
+        _show_json_text(step.get("intro"))
+        optional = bool(step.get("optional", step.get("prompt") is not None))
+        if optional and yes_no(step.get("prompt", "\nVisit the shop? (yes/no): ")) == "no":
+            _show_json_text(step.get("decline_text"), "quick")
+            return
+        _show_json_text(step.get("enter_text"), "quick")
+        run_shop(
+            player,
+            shop_stock,
+            advanced=bool(step.get("advanced", False)),
+            legendary=bool(step.get("legendary", False)),
+            title=step.get("name", "Shop Menu"),
+            leave_text=step.get("leave_text", "You leave the store."),
+        )
+        return
+
+    if step_type in {"church", "rest"}:
+        _show_json_text(step.get("intro"))
+        optional = bool(step.get("optional", True))
+        default_prompt = f"\nEnter {step.get('name', 'the church')}? (yes/no): "
+        if optional and yes_no(step.get("prompt", default_prompt)) == "no":
+            _show_json_text(step.get("decline_text", "You continue down the road."), "quick")
+            return
+        _show_json_text(step.get("enter_text"), "quick")
+        gains = _restore_json_player(player, step.get("restore"))
+        _show_json_text(
+            step.get(
+                "rest_text",
+                f"You rest safely. Health +{gains['health']}, mana +{gains['mana']}.",
+            ),
+            "beat",
+        )
+        return
+
+    if step_type == "reward":
+        _show_json_text(step.get("intro"))
+        _apply_json_rewards(step.get("rewards", []), player)
+        _show_json_text(step.get("text"), "quick")
+        return
+
+    raise SaveError(f"Unsupported custom encounter type: {step_type}")
+
+
+def _run_json_steps(steps, player, shop_stock):
+    for step in steps or []:
+        _run_json_step(step, player, shop_stock)
+
+
+def _run_json_encounter(encounter_id, player, shop_stock):
+    entry = encounter(encounter_id)
+    _run_json_step(entry, player, shop_stock)
+
 
 
 def _extra_fight(player, monster_name, intro, run_text):

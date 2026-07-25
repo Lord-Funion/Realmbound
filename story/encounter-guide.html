@@ -301,6 +301,7 @@
         <a href="#start">Start here</a>
         <a href="#structure">How the file works</a>
         <a href="#add">Add a battle</a>
+        <a href="#custom">Shops, churches & custom events</a>
         <a href="#fields">Field reference</a>
         <a href="#rewards">Rewards</a>
         <a href="#placement">Encounter placement</a>
@@ -462,6 +463,101 @@
         </div>
       </section>
 
+
+      <section id="custom">
+        <h2>Shops, churches, choices, and completely custom sequences</h2>
+        <p>
+          A custom encounter can now be more than a battle. Top-level encounters and nested sequence steps use the
+          same types, so you can combine dialogue, choices, churches, shops, rewards, and battles in any order.
+        </p>
+
+        <h3>Optional shop</h3>
+        <div class="code-wrap"><div class="code-title"><span>A named advanced shop</span><button class="copy" type="button">Copy</button></div><pre><code>"last_chance_caravan": {
+  "id": "last_chance_caravan",
+  "name": "Last-Chance Caravan",
+  "scene": "well",
+  "user_added": true,
+  "type": "shop",
+  "intro": ["A supply caravan waits beside the road."],
+  "prompt": "Stop at the caravan? (yes/no): ",
+  "optional": true,
+  "advanced": true,
+  "legendary": false,
+  "enter_text": ["The merchant opens the supply crates."],
+  "decline_text": ["You continue down the road."],
+  "leave_text": "You leave the caravan."
+}</code></pre></div>
+        <p><code>advanced</code> and <code>legendary</code> select which existing store inventory tier is available. The shop keeps normal stock and purchase behavior.</p>
+
+        <h3>Church that asks before restoring the player</h3>
+        <div class="code-wrap"><div class="code-title"><span>Optional full restoration</span><button class="copy" type="button">Copy</button></div><pre><code>"mossy_lantern_church": {
+  "id": "mossy_lantern_church",
+  "name": "Church of the Mossy Lantern",
+  "scene": "forest",
+  "user_added": true,
+  "type": "church",
+  "intro": ["A tiny stone church glows between the trees."],
+  "prompt": "Go inside? (yes/no): ",
+  "optional": true,
+  "enter_text": ["The caretaker offers you a quiet pew."],
+  "decline_text": ["You stay on the forest road."],
+  "restore": {
+    "health": "full",
+    "mana": "full"
+  },
+  "rest_text": "You leave fully restored."
+}</code></pre></div>
+        <p>Instead of <code>"full"</code>, use a number such as <code>25</code> to restore only that amount. Omit either health or mana to leave that stat unchanged.</p>
+
+        <h3>Completely custom sequence with a nested choice</h3>
+        <div class="code-wrap"><div class="code-title"><span>Dialogue → choice → church or shop</span><button class="copy" type="button">Copy</button></div><pre><code>"crossroads_stop": {
+  "id": "crossroads_stop",
+  "name": "Crossroads Stop",
+  "scene": "mountain_pass",
+  "user_added": true,
+  "type": "sequence",
+  "steps": [
+    {
+      "type": "text",
+      "text": ["Two lanterns glow beside the road."]
+    },
+    {
+      "type": "choice",
+      "prompt": "Visit the chapel instead of the trader? (yes/no): ",
+      "yes": [
+        {
+          "type": "church",
+          "name": "Travelers' Chapel",
+          "optional": false,
+          "restore": { "health": "full", "mana": 30 },
+          "rest_text": "You rest beneath the lanterns."
+        }
+      ],
+      "no": [
+        {
+          "type": "shop",
+          "name": "Mountain Trader",
+          "optional": false,
+          "advanced": true
+        }
+      ]
+    },
+    {
+      "type": "reward",
+      "rewards": [{ "item": "Small Health Potion" }],
+      "text": ["A traveler gives you a spare potion before you leave."]
+    }
+  ]
+}</code></pre></div>
+
+        <div class="callout info">
+          <strong>Supported nested step types</strong>
+          <code>text</code>, <code>choice</code>, <code>battle</code>, <code>shop</code>, <code>church</code>,
+          <code>rest</code>, <code>reward</code>, and another <code>sequence</code>. A choice uses <code>yes</code> and
+          <code>no</code> arrays containing more steps.
+        </div>
+      </section>
+
       <section id="fields">
         <h2>Encounter field reference</h2>
         <table>
@@ -471,7 +567,7 @@
             <tr><td><code>name</code></td><td class="optional">Recommended</td><td>A readable name for humans. The current runtime does not print it automatically.</td></tr>
             <tr><td><code>scene</code></td><td class="optional">Recommended</td><td>Documents which scene the encounter belongs to. Actual placement is controlled by <code>after_scene</code>.</td></tr>
             <tr><td><code>user_added</code></td><td class="required">Required</td><td>Must be <code>true</code> so the generator preserves the custom encounter.</td></tr>
-            <tr><td><code>type</code></td><td class="required">Required</td><td>Use <code>"battle"</code>. That is the automatically runnable custom type currently supported.</td></tr>
+            <tr><td><code>type</code></td><td class="required">Required</td><td>Use <code>"battle"</code>, <code>"shop"</code>, <code>"church"</code>, <code>"sequence"</code>, <code>"choice"</code>, <code>"text"</code>, or <code>"reward"</code>.</td></tr>
             <tr><td><code>enemy</code></td><td class="required">Required</td><td>The exact lowercase name of an enemy that already exists in the game's combat data.</td></tr>
             <tr><td><code>intro</code></td><td class="optional">Optional</td><td>An array of text lines shown before the battle.</td></tr>
             <tr><td><code>choice</code></td><td class="optional">Optional</td><td>Use <code>"fight_or_run"</code> to ask the player. Leave it out to start the battle immediately.</td></tr>
@@ -481,10 +577,9 @@
           </tbody>
         </table>
 
-        <div class="callout info">
-          <strong>Do not rely on <code>victory.text</code> yet.</strong>
-          Some generated entries contain an empty <code>victory.text</code> array, but the current Python and HTML5
-          encounter runners do not display it. Put essential text in <code>intro</code> for now.
+        <div class="callout success">
+          <strong><code>victory.text</code> now works in both ports.</strong>
+          Use it for dialogue or narration that should appear only after the player wins.
         </div>
       </section>
 
@@ -556,12 +651,12 @@
           <article class="mini-card">
             <h3 style="color: var(--green)">Works now</h3>
             <ul class="checklist">
-              <li>Add an extra battle after any normal scene.</li>
-              <li>Use an existing enemy.</li>
-              <li>Show one or more intro lines.</li>
-              <li>Allow fight or run.</li>
-              <li>Make running cause game over or safely end the encounter.</li>
-              <li>Give fixed money, random money, or items.</li>
+              <li>Add battles, shops, churches, rest stops, rewards, and text.</li>
+              <li>Ask yes/no questions and run different nested steps for each answer.</li>
+              <li>Combine steps into completely custom sequences.</li>
+              <li>Name shops and select normal, advanced, or legendary stock.</li>
+              <li>Restore full or partial health and mana.</li>
+              <li>Give fixed money, random money, items, health, or mana.</li>
               <li>Run the same encounter in Python and HTML5.</li>
             </ul>
           </article>
@@ -570,7 +665,6 @@
             <ul>
               <li>Creating a completely new monster only in JSON.</li>
               <li>Changing monster stats by editing the generated <code>monsters</code> section.</li>
-              <li>Adding a shop, church, puzzle, or secret route as a custom automatic encounter.</li>
               <li>Inserting an encounter halfway through an existing coded scene.</li>
               <li>Automatically syncing JSON additions to the separate C++ or legacy branches.</li>
             </ul>
@@ -578,7 +672,7 @@
         </div>
         <div class="callout warning">
           <strong>An enemy must already exist in both connected ports.</strong>
-          The Python and HTML5 combat engines still own their monster definitions. Pick a name already listed under
+          The Python and HTML5 combat engines still own brand-new monster definitions. Pick a name already listed under
           <code>monsters</code>. Adding a brand-new name only to the JSON will cause an unknown-monster error.
         </div>
       </section>
@@ -638,7 +732,7 @@
           <li>The enemy name already exists.</li>
           <li>The ID is in exactly one intended scene's <code>after_scene</code> list.</li>
           <li><code>python3 -m json.tool story/encounters.json</code> succeeds.</li>
-          <li>The battle is tested in both Python and HTML5.</li>
+          <li>Every branch of the encounter is tested in both Python and HTML5.</li>
         </ul>
       </section>
 
