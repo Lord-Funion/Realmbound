@@ -1,0 +1,45 @@
+name: Build readable encounters
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - tools/make_encounters.py
+      - .github/workflows/repair-readable-encounters.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate readable encounter data
+        run: python tools/make_encounters.py
+
+      - name: Validate generated files
+        run: |
+          python -m json.tool story/encounters.json > /dev/null
+          python -m py_compile text_adventure/encounter_data.py text_adventure/story.py
+          node --check web/app.js
+
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Encounter files are already current."
+            exit 0
+          fi
+          git commit -m "Replace source dump with readable encounters"
+          git push
