@@ -1,0 +1,50 @@
+name: Validate cumulative balance
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tools/_balance_followup.py
+      - .github/workflows/validate-balance-followup.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONPATH: .
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply cumulative balance follow-up
+        run: python tools/_balance_followup.py
+
+      - name: Validate all generated code and balance
+        run: |
+          python -m json.tool story/encounters.json > /dev/null
+          python -m py_compile text_adventure/*.py tools/make_encounters.py tools/check_balance.py
+          node --check web/app.js
+          python tools/check_balance.py
+
+      - name: Remove temporary validation files
+        run: rm tools/_balance_followup.py .github/workflows/validate-balance-followup.yml
+
+      - name: Commit validated follow-up
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Guarantee cumulative road and boss survivability"
+          git push
