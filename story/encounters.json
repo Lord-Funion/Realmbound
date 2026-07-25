@@ -995,8 +995,8 @@
       "reward": 35
     },
     "realmbound dragon": {
-      "health": 150,
-      "damage": 18,
+      "health": 135,
+      "damage": 14,
       "attacks": [
         "starfire breath",
         "crownquake",
