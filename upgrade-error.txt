@@ -19,3 +19,20 @@ Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/subprocess.py", line 571, in run
     raise CalledProcessError(retcode, process.args,
 subprocess.CalledProcessError: Command '['python', 'tools/make_encounters.py']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/home/runner/work/Realmbound/Realmbound/tools/make_encounters.py", line 108, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "/home/runner/work/Realmbound/Realmbound/tools/make_encounters.py", line 102, in main
+    OUT.write_text(json.dumps(build(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+                              ^^^^^^^
+  File "/home/runner/work/Realmbound/Realmbound/tools/make_encounters.py", line 27, in build
+    source=STORY.read_text(encoding='utf-8'); tree=ast.parse(source)
+                                                   ^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/ast.py", line 52, in parse
+    return compile(source, filename, mode, flags,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<unknown>", line 709
+    say("
+        ^
+SyntaxError: unterminated string literal (detected at line 709)
