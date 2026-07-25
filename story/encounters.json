@@ -53,7 +53,7 @@
       "summary": "The first goblin is a simple physical fight before spell combat begins.",
       "encounters": [
         {
-          "id": "first_goblin_gate_rat_1121",
+          "id": "first_goblin_gate_rat_1142",
           "type": "battle",
           "enemy": "gate rat",
           "runs_from": "custom_scene"
@@ -66,48 +66,48 @@
       "summary": "Save the village, receive a potion, and visit Gnome Depot.",
       "encounters": [
         {
-          "id": "village_troll_1136",
+          "id": "village_troll_1157",
           "type": "battle",
           "enemy": "troll",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_smoke_imp_1137",
+          "id": "village_smoke_imp_1158",
           "type": "battle",
           "enemy": "smoke imp",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_rest_1148",
+          "id": "village_rest_1169",
           "type": "rest",
           "name": "the Church of the Little Lantern",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_clocktower_scene_1154",
+          "id": "village_clocktower_scene_1175",
           "type": "secret_route",
           "destination": "clocktower",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_well_scene_1156",
+          "id": "village_well_scene_1177",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_shop_1164",
+          "id": "village_shop_1185",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_skeleton_1170",
+          "id": "village_skeleton_1191",
           "type": "battle",
           "enemy": "skeleton",
           "runs_from": "custom_scene"
         },
         {
-          "id": "village_curse_candle_1172",
+          "id": "village_curse_candle_1193",
           "type": "battle",
           "enemy": "curse candle",
           "runs_from": "custom_scene"
@@ -120,36 +120,36 @@
       "summary": "Forest fights and Miss Costalot's traveling shop.",
       "encounters": [
         {
-          "id": "forest_werewolf_1187",
+          "id": "forest_werewolf_1208",
           "type": "battle",
           "enemy": "werewolf",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_bramble_wolf_1189",
+          "id": "forest_bramble_wolf_1210",
           "type": "battle",
           "enemy": "bramble wolf",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_goblin_1200",
+          "id": "forest_goblin_1221",
           "type": "battle",
           "enemy": "goblin",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_treasure_mimic_1202",
+          "id": "forest_treasure_mimic_1223",
           "type": "battle",
           "enemy": "treasure mimic",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_shop_1210",
+          "id": "forest_shop_1231",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "forest_well_scene_1213",
+          "id": "forest_well_scene_1234",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
@@ -162,13 +162,13 @@
       "summary": "Handle the left/right door branch and converge back to the main path.",
       "encounters": [
         {
-          "id": "twin_doors_ogre_1229",
+          "id": "twin_doors_ogre_1250",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
         },
         {
-          "id": "twin_doors_ogre_1242",
+          "id": "twin_doors_ogre_1263",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
@@ -181,13 +181,13 @@
       "summary": "Fight the witch guarding the way to the mountains.",
       "encounters": [
         {
-          "id": "witch_witch_1256",
+          "id": "witch_witch_1277",
           "type": "battle",
           "enemy": "witch",
           "runs_from": "custom_scene"
         },
         {
-          "id": "witch_curse_candle_1258",
+          "id": "witch_curse_candle_1279",
           "type": "battle",
           "enemy": "curse candle",
           "runs_from": "custom_scene"
@@ -200,13 +200,13 @@
       "summary": "Climb toward the final valley and meet colder trouble.",
       "encounters": [
         {
-          "id": "mountain_pass_ice_goblin_1274",
+          "id": "mountain_pass_ice_goblin_1295",
           "type": "battle",
           "enemy": "ice goblin",
           "runs_from": "custom_scene"
         },
         {
-          "id": "mountain_pass_snow_bat_1275",
+          "id": "mountain_pass_snow_bat_1296",
           "type": "battle",
           "enemy": "snow bat",
           "runs_from": "custom_scene"
@@ -219,30 +219,30 @@
       "summary": "A late-game market with weapons and stranger magic.",
       "encounters": [
         {
-          "id": "moonlit_market_rest_1293",
+          "id": "moonlit_market_rest_1314",
           "type": "rest",
           "name": "the Chapel of the Second Moon",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_shop_1294",
+          "id": "moonlit_market_shop_1315",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_shadow_knight_1300",
+          "id": "moonlit_market_shadow_knight_1321",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_receipt_wraith_1301",
+          "id": "moonlit_market_receipt_wraith_1322",
           "type": "battle",
           "enemy": "receipt wraith",
           "runs_from": "custom_scene"
         },
         {
-          "id": "moonlit_market_clocktower_scene_1313",
+          "id": "moonlit_market_clocktower_scene_1334",
           "type": "secret_route",
           "destination": "clocktower",
           "runs_from": "custom_scene"
@@ -255,13 +255,13 @@
       "summary": "Sneak through the vampire castle and steal the final key.",
       "encounters": [
         {
-          "id": "vampire_castle_vampire_1324",
+          "id": "vampire_castle_vampire_1345",
           "type": "battle",
           "enemy": "vampire",
           "runs_from": "custom_scene"
         },
         {
-          "id": "vampire_castle_basement_bat_1325",
+          "id": "vampire_castle_basement_bat_1346",
           "type": "battle",
           "enemy": "basement bat",
           "runs_from": "custom_scene"
@@ -274,19 +274,19 @@
       "summary": "A long detour that looks like the end and is not the end.",
       "encounters": [
         {
-          "id": "false_throne_shadow_knight_1346",
+          "id": "false_throne_shadow_knight_1367",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "false_throne_sugar_golem_1347",
+          "id": "false_throne_sugar_golem_1368",
           "type": "battle",
           "enemy": "sugar golem",
           "runs_from": "custom_scene"
         },
         {
-          "id": "false_throne_shop_1357",
+          "id": "false_throne_shop_1378",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -298,19 +298,19 @@
       "summary": "The road down under the castle before the real last gate.",
       "encounters": [
         {
-          "id": "underkeep_ogre_1368",
+          "id": "underkeep_ogre_1389",
           "type": "battle",
           "enemy": "ogre",
           "runs_from": "custom_scene"
         },
         {
-          "id": "underkeep_rust_rat_1369",
+          "id": "underkeep_rust_rat_1390",
           "type": "battle",
           "enemy": "rust rat",
           "runs_from": "custom_scene"
         },
         {
-          "id": "underkeep_well_scene_1382",
+          "id": "underkeep_well_scene_1403",
           "type": "secret_route",
           "destination": "well",
           "runs_from": "custom_scene"
@@ -323,19 +323,19 @@
       "summary": "A hidden side path with a slow clockwork quest.",
       "encounters": [
         {
-          "id": "clocktower_shadow_knight_1393",
+          "id": "clocktower_shadow_knight_1414",
           "type": "battle",
           "enemy": "shadow knight",
           "runs_from": "custom_scene"
         },
         {
-          "id": "clocktower_rust_rat_1394",
+          "id": "clocktower_rust_rat_1415",
           "type": "battle",
           "enemy": "rust rat",
           "runs_from": "custom_scene"
         },
         {
-          "id": "clocktower_shop_1404",
+          "id": "clocktower_shop_1425",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -353,29 +353,29 @@
       "summary": "A long required expedition through the realm's sealed outer roads.",
       "encounters": [
         {
-          "id": "hundred_day_road_rest_1448",
+          "id": "hundred_day_road_rest_1469",
           "type": "rest",
           "name": "Church",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1449",
+          "id": "hundred_day_road_shop_1470",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_rest_1460",
+          "id": "hundred_day_road_rest_1481",
           "type": "rest",
           "name": "Church",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1465",
+          "id": "hundred_day_road_shop_1486",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "hundred_day_road_shop_1499",
+          "id": "hundred_day_road_shop_1520",
           "type": "shop",
           "runs_from": "custom_scene"
         }
@@ -387,30 +387,30 @@
       "summary": "Prepare at the dragon forge and open the last gate.",
       "encounters": [
         {
-          "id": "dragon_gate_rest_1506",
+          "id": "dragon_gate_rest_1527",
           "type": "rest",
           "name": "the Church of the Last Door",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_shop_1509",
+          "id": "dragon_gate_shop_1530",
           "type": "shop",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_glass_cobra_1511",
+          "id": "dragon_gate_glass_cobra_1532",
           "type": "battle",
           "enemy": "glass cobra",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_crystal_dragon_1522",
+          "id": "dragon_gate_crystal_dragon_1543",
           "type": "battle",
           "enemy": "crystal dragon",
           "runs_from": "custom_scene"
         },
         {
-          "id": "dragon_gate_crown_wraith_1523",
+          "id": "dragon_gate_crown_wraith_1544",
           "type": "battle",
           "enemy": "crown wraith",
           "runs_from": "custom_scene"
@@ -423,7 +423,7 @@
       "summary": "Face the dragon that has been holding the realm together by force.",
       "encounters": [
         {
-          "id": "final_battle_realmbound_dragon_1558",
+          "id": "final_battle_realmbound_dragon_1579",
           "type": "battle",
           "enemy": "realmbound dragon",
           "runs_from": "custom_scene"
@@ -433,8 +433,8 @@
     }
   },
   "data_encounters": {
-    "first_goblin_gate_rat_1121": {
-      "id": "first_goblin_gate_rat_1121",
+    "first_goblin_gate_rat_1142": {
+      "id": "first_goblin_gate_rat_1142",
       "name": "Gate Rat",
       "scene": "first_goblin",
       "type": "battle",
@@ -453,8 +453,8 @@
         "offer_potions": true
       }
     },
-    "village_smoke_imp_1137": {
-      "id": "village_smoke_imp_1137",
+    "village_smoke_imp_1158": {
+      "id": "village_smoke_imp_1158",
       "name": "Smoke Imp",
       "scene": "village",
       "type": "battle",
@@ -473,8 +473,8 @@
         "offer_potions": true
       }
     },
-    "village_curse_candle_1172": {
-      "id": "village_curse_candle_1172",
+    "village_curse_candle_1193": {
+      "id": "village_curse_candle_1193",
       "name": "Curse Candle",
       "scene": "village",
       "type": "battle",
@@ -493,8 +493,8 @@
         "offer_potions": true
       }
     },
-    "forest_bramble_wolf_1189": {
-      "id": "forest_bramble_wolf_1189",
+    "forest_bramble_wolf_1210": {
+      "id": "forest_bramble_wolf_1210",
       "name": "Bramble Wolf",
       "scene": "forest",
       "type": "battle",
@@ -513,8 +513,8 @@
         "offer_potions": true
       }
     },
-    "forest_treasure_mimic_1202": {
-      "id": "forest_treasure_mimic_1202",
+    "forest_treasure_mimic_1223": {
+      "id": "forest_treasure_mimic_1223",
       "name": "Treasure Mimic",
       "scene": "forest",
       "type": "battle",
@@ -533,8 +533,8 @@
         "offer_potions": true
       }
     },
-    "witch_curse_candle_1258": {
-      "id": "witch_curse_candle_1258",
+    "witch_curse_candle_1279": {
+      "id": "witch_curse_candle_1279",
       "name": "Curse Candle",
       "scene": "witch",
       "type": "battle",
@@ -553,8 +553,8 @@
         "offer_potions": true
       }
     },
-    "mountain_pass_snow_bat_1275": {
-      "id": "mountain_pass_snow_bat_1275",
+    "mountain_pass_snow_bat_1296": {
+      "id": "mountain_pass_snow_bat_1296",
       "name": "Snow Bat",
       "scene": "mountain_pass",
       "type": "battle",
@@ -573,8 +573,8 @@
         "offer_potions": true
       }
     },
-    "moonlit_market_receipt_wraith_1301": {
-      "id": "moonlit_market_receipt_wraith_1301",
+    "moonlit_market_receipt_wraith_1322": {
+      "id": "moonlit_market_receipt_wraith_1322",
       "name": "Receipt Wraith",
       "scene": "moonlit_market",
       "type": "battle",
@@ -593,8 +593,8 @@
         "offer_potions": true
       }
     },
-    "vampire_castle_basement_bat_1325": {
-      "id": "vampire_castle_basement_bat_1325",
+    "vampire_castle_basement_bat_1346": {
+      "id": "vampire_castle_basement_bat_1346",
       "name": "Basement Bat",
       "scene": "vampire_castle",
       "type": "battle",
@@ -613,8 +613,8 @@
         "offer_potions": true
       }
     },
-    "false_throne_sugar_golem_1347": {
-      "id": "false_throne_sugar_golem_1347",
+    "false_throne_sugar_golem_1368": {
+      "id": "false_throne_sugar_golem_1368",
       "name": "Sugar Golem",
       "scene": "false_throne",
       "type": "battle",
@@ -633,8 +633,8 @@
         "offer_potions": true
       }
     },
-    "underkeep_rust_rat_1369": {
-      "id": "underkeep_rust_rat_1369",
+    "underkeep_rust_rat_1390": {
+      "id": "underkeep_rust_rat_1390",
       "name": "Rust Rat",
       "scene": "underkeep",
       "type": "battle",
@@ -653,8 +653,8 @@
         "offer_potions": true
       }
     },
-    "clocktower_rust_rat_1394": {
-      "id": "clocktower_rust_rat_1394",
+    "clocktower_rust_rat_1415": {
+      "id": "clocktower_rust_rat_1415",
       "name": "Rust Rat",
       "scene": "clocktower",
       "type": "battle",
@@ -673,8 +673,8 @@
         "offer_potions": true
       }
     },
-    "dragon_gate_glass_cobra_1511": {
-      "id": "dragon_gate_glass_cobra_1511",
+    "dragon_gate_glass_cobra_1532": {
+      "id": "dragon_gate_glass_cobra_1532",
       "name": "Glass Cobra",
       "scene": "dragon_gate",
       "type": "battle",
@@ -693,8 +693,8 @@
         "offer_potions": true
       }
     },
-    "dragon_gate_crown_wraith_1523": {
-      "id": "dragon_gate_crown_wraith_1523",
+    "dragon_gate_crown_wraith_1544": {
+      "id": "dragon_gate_crown_wraith_1544",
       "name": "Crown Wraith",
       "scene": "dragon_gate",
       "type": "battle",
