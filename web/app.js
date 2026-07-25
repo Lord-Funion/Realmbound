@@ -6,8 +6,8 @@
   const SAVE_SUFFIX = ".tasave";
   const SAVE_FORMAT_VERSION = 1;
   const DEFAULT_API_URL = "https://lordfunion.dev/adventure-api";
-  const BASIC_DAMAGE = 4;
-  const STATUS_DAMAGE = 5;
+  const BASIC_DAMAGE = 8;
+  const STATUS_DAMAGE = 4;
   const OUTPUT_DELAY_MS = 280;
   const FINISHED_SCENE = "finished";
   let ENCOUNTER_DATA = null;
@@ -56,41 +56,41 @@
 
   const SPELLS = {
     Fireball: {
-      damage: 14,
-      manaCost: 12,
+      damage: 18,
+      manaCost: 10,
       effects: { burn: 2 },
       description: "Deals 14 damage and sets the target burning.",
     },
     "Arcane Blast": {
       damage: 0,
-      manaCost: 32,
+      manaCost: 24,
       effects: { stun: 2 },
       description: "Stuns an enemy for 2 turns.",
     },
     Thunderstorm: {
-      damage: 32,
-      manaCost: 45,
+      damage: 38,
+      manaCost: 32,
       description: "Deals 32 damage.",
     },
     "Restoration Incantation": {
-      healing: 24,
-      manaCost: 35,
+      healing: 35,
+      manaCost: 25,
       description: "Heals 24 health in battle.",
     },
     "Frost Nova": {
-      damage: 18,
-      manaCost: 38,
+      damage: 24,
+      manaCost: 28,
       effects: { stun: 1 },
       description: "Deals 18 damage and chills an enemy still for 1 turn.",
     },
     "Solar Beam": {
-      damage: 45,
-      manaCost: 65,
+      damage: 55,
+      manaCost: 45,
       description: "Deals 45 damage.",
     },
     "Life Bloom": {
-      healing: 45,
-      manaCost: 55,
+      healing: 55,
+      manaCost: 40,
       description: "Heals 45 health in battle.",
     },
     "Lockio Reducto": {
@@ -100,7 +100,7 @@
 
   const FROG_ATTACKS = {
     "Tongue Slap": {
-      damage: 8,
+      damage: 10,
       energyCost: 0,
       description: "A free snapping smack from a very serious frog.",
     },
@@ -566,6 +566,143 @@
     "calendar dragon",
   ];
 
+  const STORY_BALANCE_OVERRIDES = {
+      "gate rat": {
+          "health": 22,
+          "damage": 5,
+          "reward": 8
+      },
+      "goblin": {
+          "health": 30,
+          "damage": 6,
+          "reward": 9
+      },
+      "troll": {
+          "health": 46,
+          "damage": 8,
+          "reward": 12
+      },
+      "smoke imp": {
+          "health": 32,
+          "damage": 7,
+          "reward": 10
+      },
+      "skeleton": {
+          "health": 34,
+          "damage": 8,
+          "reward": 10
+      },
+      "bramble wolf": {
+          "health": 44,
+          "damage": 8,
+          "reward": 11
+      },
+      "werewolf": {
+          "health": 54,
+          "damage": 9,
+          "reward": 13
+      },
+      "treasure mimic": {
+          "health": 48,
+          "damage": 9,
+          "reward": 14
+      },
+      "ogre": {
+          "health": 68,
+          "damage": 11,
+          "reward": 16
+      },
+      "witch": {
+          "health": 58,
+          "damage": 10,
+          "reward": 15
+      },
+      "curse candle": {
+          "health": 40,
+          "damage": 8,
+          "reward": 11
+      },
+      "ice goblin": {
+          "health": 60,
+          "damage": 10,
+          "reward": 15
+      },
+      "snow bat": {
+          "health": 42,
+          "damage": 8,
+          "reward": 11
+      },
+      "shadow knight": {
+          "health": 76,
+          "damage": 12,
+          "reward": 18
+      },
+      "receipt wraith": {
+          "health": 52,
+          "damage": 9,
+          "reward": 13
+      },
+      "vampire": {
+          "health": 70,
+          "damage": 12,
+          "reward": 18
+      },
+      "basement bat": {
+          "health": 48,
+          "damage": 9,
+          "reward": 12
+      },
+      "sugar golem": {
+          "health": 86,
+          "damage": 13,
+          "reward": 20
+      },
+      "rust rat": {
+          "health": 54,
+          "damage": 9,
+          "reward": 13
+      },
+      "glass cobra": {
+          "health": 72,
+          "damage": 12,
+          "reward": 18
+      },
+      "crystal dragon": {
+          "health": 108,
+          "damage": 14,
+          "reward": 30
+      },
+      "crown wraith": {
+          "health": 88,
+          "damage": 13,
+          "reward": 24
+      },
+      "lord dreadbiscuit": {
+          "health": 120,
+          "damage": 16,
+          "reward": 35
+      },
+      "realmbound dragon": {
+          "health": 135,
+          "damage": 14,
+          "reward": 60
+      }
+  };
+  for (const [name, stats] of Object.entries(STORY_BALANCE_OVERRIDES)) {
+    Object.assign(MONSTERS[name], stats);
+  }
+  LONG_ROAD_ENEMIES.forEach((name, zeroIndex) => {
+    const index = zeroIndex + 1;
+    Object.assign(MONSTERS[name], {
+      health: 48 + Math.round(index * 1.1),
+      damage: 6 + Math.floor((index - 1) / 12),
+      reward: 10 + Math.floor((index - 1) / 5),
+    });
+  });
+  for (const monster of Object.values(MONSTERS)) {
+    if (monster.reward === undefined) monster.reward = Math.max(8, Math.min(30, Math.round(monster.health / 7)));
+  }
+
   const LOOT_DROPS = [
     "Suspicious Gold Nugget",
     "Metal Scraps of Mystery",
@@ -991,11 +1128,11 @@
     createPlayer() {
       return {
         name: "Adventurer",
-        money: 0,
-        health: 100,
-        healthMax: 100,
-        mana: 100,
-        manaMax: 100,
+        money: 20,
+        health: 120,
+        healthMax: 120,
+        mana: 120,
+        manaMax: 120,
         armor: 0,
         weaponDamage: 0,
         extraDamage: 0,
@@ -1004,7 +1141,7 @@
         frogEnergy: 0,
         frogEnergyMax: 0,
         roadProgress: 0,
-        backpack: [],
+        backpack: ["Small Health Potion"],
         spells: [],
         frogAttacks: [],
       };
@@ -1979,30 +2116,145 @@
         throw new Error("Unknown story checkpoint.");
       }
 
-      await this.runSceneAdditions(sceneId, player);
+      await this.runSceneAdditions(sceneId, player, shopStock);
     }
 
-    async runJsonEncounter(encounterId, player) {
-      const entry = ENCOUNTER_DATA.data_encounters[encounterId];
-      if (!entry) throw new Error(`Unknown encounter: ${encounterId}`);
-      for (const line of entry.intro || []) this.say(`\n${line}`);
-      if (entry.type === "battle") {
-        if (entry.choice === "fight_or_run" && await this.fightOrRun() === "run") {
-          if (entry.run && entry.run.text) this.say(`\n${entry.run.text}`);
-          if (entry.run && entry.run.game_over) this.gameOver(player);
+    jsonLines(value) {
+      if (value === undefined || value === null) return [];
+      return Array.isArray(value) ? value.map(String) : [String(value)];
+    }
+
+    showJsonText(value) {
+      for (const line of this.jsonLines(value)) {
+        if (line) this.say(`\n${line}`);
+      }
+    }
+
+    jsonMoney(value) {
+      if (value && typeof value === "object") return randomInt(Number(value.min || 0), Number(value.max || 0));
+      return Number(value || 0);
+    }
+
+    applyJsonRewards(rewards, player) {
+      for (const reward of rewards || []) {
+        if (!reward || typeof reward !== "object") continue;
+        if (reward.item) player.backpack.push(String(reward.item));
+        if (reward.money !== undefined) {
+          const amount = this.jsonMoney(reward.money);
+          player.money += amount;
+          this.sayParts(["\nYou receive ", ...this.moneyParts(amount), "."]);
+        }
+        if (reward.health !== undefined) {
+          const gained = Math.max(0, Math.min(Number(reward.health), player.healthMax - player.health));
+          player.health += gained;
+          this.say(`\nHealth +${gained}.`);
+        }
+        if (reward.mana !== undefined) {
+          const gained = Math.max(0, Math.min(Number(reward.mana), player.manaMax - player.mana));
+          player.mana += gained;
+          this.say(`\nMana +${gained}.`);
+        }
+      }
+    }
+
+    restoreJsonPlayer(player, restore) {
+      const config = restore && typeof restore === "object" ? restore : { health: "full", mana: "full" };
+      const gains = { health: 0, mana: 0 };
+      for (const [stat, maximum] of [["health", "healthMax"], ["mana", "manaMax"]]) {
+        if (config[stat] === undefined || config[stat] === null) continue;
+        const before = player[stat];
+        player[stat] = config[stat] === "full"
+          ? player[maximum]
+          : Math.min(player[maximum], player[stat] + Math.max(0, Number(config[stat])));
+        gains[stat] = player[stat] - before;
+      }
+      return gains;
+    }
+
+    async runJsonStep(step, player, shopStock) {
+      if (!step || typeof step !== "object") throw new Error("A custom encounter step must be an object.");
+      const type = step.type || "text";
+
+      if (type === "sequence") {
+        this.showJsonText(step.intro);
+        await this.runJsonSteps(step.steps || [], player, shopStock);
+        return;
+      }
+      if (type === "text") {
+        this.showJsonText(step.text !== undefined ? step.text : step.lines);
+        return;
+      }
+      if (type === "choice") {
+        this.showJsonText(step.intro);
+        const answer = await this.yesNo(step.prompt || "\nDo you continue? (yes/no): ");
+        await this.runJsonSteps(step[answer] || [], player, shopStock);
+        return;
+      }
+      if (type === "battle") {
+        this.showJsonText(step.intro);
+        if (step.choice === "fight_or_run" && await this.fightOrRun(step.prompt || "\nDo you fight or run? ") === "run") {
+          const result = step.run || {};
+          this.showJsonText(result.text);
+          if (result.game_over) this.gameOver(player);
           return;
         }
-        await this.spellFight(entry.enemy, player);
+        await this.spellFight(step.enemy, player);
+        const victory = step.victory || {};
+        this.applyJsonRewards(victory.rewards || [], player);
+        this.showJsonText(victory.text);
+        if (victory.offer_potions) await this.offerPotions(player);
+        return;
       }
-      for (const reward of ((entry.victory || {}).rewards || [])) {
-        if (reward.item) player.backpack.push(reward.item);
-        if (reward.money !== undefined) { const v=reward.money; player.money += typeof v === "object" ? randomInt(v.min,v.max) : Number(v); }
+      if (type === "shop") {
+        this.showJsonText(step.intro);
+        const optional = step.optional !== undefined ? Boolean(step.optional) : step.prompt !== undefined;
+        if (optional && await this.yesNo(step.prompt || "\nVisit the shop? (yes/no): ") === "no") {
+          this.showJsonText(step.decline_text);
+          return;
+        }
+        this.showJsonText(step.enter_text);
+        await this.runShop(player, shopStock, Boolean(step.advanced), Boolean(step.legendary), {
+          title: step.name || "Shop Menu",
+          leaveText: step.leave_text || "You leave the store.",
+        });
+        return;
       }
-      if ((entry.victory || {}).offer_potions) await this.offerPotions(player);
+      if (type === "church" || type === "rest") {
+        this.showJsonText(step.intro);
+        const optional = step.optional !== undefined ? Boolean(step.optional) : true;
+        const prompt = step.prompt || `\nEnter ${step.name || "the church"}? (yes/no): `;
+        if (optional && await this.yesNo(prompt) === "no") {
+          this.showJsonText(step.decline_text || "You continue down the road.");
+          return;
+        }
+        this.showJsonText(step.enter_text);
+        const gains = this.restoreJsonPlayer(player, step.restore);
+        this.showJsonText(step.rest_text || `You rest safely. Health +${gains.health}, mana +${gains.mana}.`);
+        return;
+      }
+      if (type === "reward") {
+        this.showJsonText(step.intro);
+        this.applyJsonRewards(step.rewards || [], player);
+        this.showJsonText(step.text);
+        return;
+      }
+      throw new Error(`Unsupported custom encounter type: ${type}`);
     }
 
-    async runSceneAdditions(sceneId, player) {
-      for (const id of (ENCOUNTER_DATA.scenes[sceneId].after_scene || [])) await this.runJsonEncounter(id, player);
+    async runJsonSteps(steps, player, shopStock) {
+      for (const step of steps || []) await this.runJsonStep(step, player, shopStock);
+    }
+
+    async runJsonEncounter(encounterId, player, shopStock) {
+      const entry = ENCOUNTER_DATA.data_encounters[encounterId];
+      if (!entry) throw new Error(`Unknown encounter: ${encounterId}`);
+      await this.runJsonStep(entry, player, shopStock);
+    }
+
+    async runSceneAdditions(sceneId, player, shopStock) {
+      for (const id of (ENCOUNTER_DATA.scenes[sceneId].after_scene || [])) {
+        await this.runJsonEncounter(id, player, shopStock);
+      }
     }
 
     async extraFight(player, monsterName, intro, runText) {
@@ -2712,7 +2964,7 @@
       let soldAnything = false;
       for (const item of [...player.backpack]) {
         if (SELLABLE_LOOT.has(item)) {
-          const worth = randomInt(5, 10);
+          const worth = randomInt(8, 14);
           player.backpack.splice(player.backpack.indexOf(item), 1);
           player.money += worth;
           soldAnything = true;
@@ -2781,7 +3033,7 @@
           break;
         }
         if (choice === "small") {
-          player.health = Math.min(maxHealth, player.health + 15);
+          player.health = Math.min(maxHealth, player.health + 30);
           player.backpack.splice(player.backpack.indexOf("Small Health Potion"), 1);
           this.say(`\nYour health is now ${player.health}.`);
           break;
@@ -2836,7 +3088,7 @@
     }
 
     basicDamage(player) {
-      return BASIC_DAMAGE + (player.weaponDamage || 0);
+      return BASIC_DAMAGE + (player.weaponDamage || 0) + Math.floor((player.roadProgress || 0) / 5);
     }
 
     tryCombatRevive(player) {
@@ -3158,14 +3410,18 @@
 
     winFight(monsterName, player) {
       this.say(`The ${monsterName} has been defeated!`);
-      const reward = randomInt(4, 9);
+      const monster = MONSTERS[monsterName];
+      const reward = Number(monster.reward || 10);
       player.money += reward;
       const drop = randomChoice(LOOT_DROPS);
       player.backpack.push(drop);
-      if (player.frogMode) {
-        player.frogEnergy = Math.min(player.frogEnergyMax, player.frogEnergy + 4);
-      }
+      const healthGain = Math.max(0, Math.min(Math.max(40, Math.floor(player.healthMax / 3)), player.healthMax - player.health));
+      const manaGain = Math.max(0, Math.min(Math.max(15, Math.floor(player.manaMax / 8)), player.manaMax - player.mana));
+      player.health += healthGain;
+      player.mana += manaGain;
+      if (player.frogMode) player.frogEnergy = Math.min(player.frogEnergyMax, player.frogEnergy + 8);
       this.sayParts(["You gained ", ...this.moneyParts(reward), ` and found a ${drop}.`]);
+      if (healthGain || manaGain) this.say(`You catch your breath: health +${healthGain}, mana +${manaGain}.`);
     }
 
     gameOver(player) {
@@ -3392,14 +3648,14 @@
       }
     }
 
-    async runFrogShop(player, stock, advanced = false, legendary = false) {
+    async runFrogShop(player, stock, advanced = false, legendary = false, config = {}) {
       while (true) {
         const options = [
           {
             key: "1",
             label: "Small Health Potion",
             value: "small_potion",
-            detail: [...this.moneyParts(28), " - heals 15 health"],
+            detail: [...this.moneyParts(28), " - heals 30 health"],
             aliases: ["small", "small potion", "health potion", "potion"],
             status: this.priceStatus(player, 28),
           },
@@ -3537,7 +3793,7 @@
           ` | Health: ${statMeter(player.health, player.healthMax)} ${player.health}/${player.healthMax} | Frog Energy: ${statMeter(player.frogEnergy, player.frogEnergyMax)} ${player.frogEnergy}/${player.frogEnergyMax}`,
         ];
 
-        const choice = await this.chooseMenu("Frog Training Shop", options, {
+        const choice = await this.chooseMenu(config.title || "Frog Training Shop", options, {
           prompt: "Shop choice: ",
           subtitle,
         });
@@ -3567,16 +3823,16 @@
         } else if (choice === "dragon_shield") {
           this.buyEquipment(player, stock, "Dragon Scale Shield", 220, "armor", 8);
         } else if (choice === "leave") {
-          this.say("\nYou leave the store.");
+          this.say(`\n${config.leaveText || "You leave the store."}`);
           return;
         }
       }
     }
 
-    async runShop(player, stock, advanced = false, legendary = false) {
+    async runShop(player, stock, advanced = false, legendary = false, config = {}) {
       this.sellScraps(player);
       if (player.frogMode) {
-        await this.runFrogShop(player, stock, advanced, legendary);
+        await this.runFrogShop(player, stock, advanced, legendary, config);
         return;
       }
 
@@ -3595,7 +3851,7 @@
             key: "2",
             label: "Small Health Potion",
             value: "small_potion",
-            detail: [...this.moneyParts(28), " - heals 15 health"],
+            detail: [...this.moneyParts(28), " - heals 30 health"],
             aliases: ["small", "small potion", "health potion", "potion"],
             status: this.priceStatus(player, 28),
           },
@@ -3759,7 +4015,7 @@
           ` | Health: ${statMeter(player.health, player.healthMax)} ${player.health}/${player.healthMax} | Mana: ${statMeter(player.mana, player.manaMax)} ${player.mana}/${player.manaMax}`,
         ];
 
-        const choice = await this.chooseMenu("Shop Menu", options, {
+        const choice = await this.chooseMenu(config.title || "Shop Menu", options, {
           prompt: "Shop choice: ",
           subtitle,
         });
@@ -3797,7 +4053,7 @@
         } else if (choice === "star_cloak") {
           this.buyEquipment(player, stock, "Star Cloak", 230, "extraDamage", 5);
         } else if (choice === "leave") {
-          this.say("\nYou leave the store.");
+          this.say(`\n${config.leaveText || "You leave the store."}`);
           return;
         }
       }

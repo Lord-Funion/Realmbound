@@ -66,7 +66,7 @@ def build():
                     encounters.append({'id':f'{scene_id}_{name}_{call.lineno}','type':'secret_route','destination':name.removesuffix('_scene'),'runs_from':'custom_scene'})
         previous=existing.get('scenes',{}).get(scene_id,{}) if isinstance(existing,dict) else {}
         scenes[scene_id]={'title':titles.get(scene_id,scene_id.replace('_',' ').title()),'summary':ast.get_docstring(fn) or '', 'encounters':encounters,'after_scene':previous.get('after_scene',[])}
-    return {'schema_version':1,'game':'Realmbound','editing_help':{'add_encounter':['Copy or create an object in data_encounters.','Add its id to a scene after_scene list.','Python and HTML5 run that encounter automatically.'],'note':'runs_from custom_scene means special logic remains in code; this file still lists it so the story is easy to read.'},'scene_order':order,'scenes':scenes,'data_encounters':data,'monsters':MONSTERS,'sequences':{'hundred_day_road':{'enemies':list(LONG_ROAD_ENEMIES),'checkpoint_every':5,'rest_every':5,'shop_every':10}}}
+    return {'schema_version':2,'game':'Realmbound','editing_help':{'add_encounter':['Create an object in data_encounters with user_added true.','Add its id to a scene after_scene list.','Use battle, shop, church, sequence, choice, text, or reward steps.','Python and HTML5 run the same data automatically.'],'note':'runs_from custom_scene marks older scene logic that is listed for reference; after_scene entries are fully data-driven.'},'scene_order':order,'scenes':scenes,'data_encounters':data,'monsters':MONSTERS,'sequences':{'hundred_day_road':{'enemies':list(LONG_ROAD_ENEMIES),'checkpoint_every':5,'rest_every':5,'shop_every':10}}}
 
 LOADER='''"""Read story/encounters.json."""\nimport json\nfrom functools import lru_cache\nfrom pathlib import Path\nPATH=Path(__file__).resolve().parents[1]/"story"/"encounters.json"\n@lru_cache(maxsize=1)\ndef load():\n    return json.loads(PATH.read_text(encoding="utf-8"))\ndef encounter(eid):\n    return load()["data_encounters"][eid]\ndef additions(scene_id):\n    return load()["scenes"][scene_id].get("after_scene",[])\n'''
 
@@ -98,11 +98,11 @@ def patch_web():
 
 
 def main():
-    OUT.parent.mkdir(exist_ok=True); OUT.write_text(json.dumps(build(),indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-    patch_python(); patch_web()
-    for name in ('story/realmbound_story.json','tools/story_sync.py','.github/workflows/bootstrap-shared-story.yml'):
-        q=ROOT/name
-        if q.exists(): q.unlink()
-    (ROOT/'story'/'README.md').write_text('# Encounter editor\n\nEdit `story/encounters.json`. It lists every battle, shop, rest stop, and secret without copying source code. To add a battle, put it in `data_encounters` and add its id to a scene\'s `after_scene` list. Python and HTML5 will run it automatically.\n',encoding='utf-8')
+    OUT.parent.mkdir(exist_ok=True)
+    OUT.write_text(json.dumps(build(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    python_source = STORY.read_text(encoding="utf-8")
+    web_source = WEB.read_text(encoding="utf-8")
+    if "def _run_json_encounter(" not in python_source or "async runJsonEncounter(" not in web_source:
+        raise RuntimeError("The connected encounter runtime is missing from a port.")
 
 if __name__=='__main__': main()

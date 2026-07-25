@@ -7,41 +7,41 @@ read and avoids magic strings scattered through combat and shops.
 
 SPELLS = {
     "Fireball": {
-        "damage": 14,
-        "manaCost": 12,
+        "damage": 18,
+        "manaCost": 10,
         "effects": {"burn": 2},
         "description": "Deals 14 damage and sets the target burning.",
     },
     "Arcane Blast": {
         "damage": 0,
-        "manaCost": 32,
+        "manaCost": 24,
         "effects": {"stun": 2},
         "description": "Stuns an enemy for 2 turns.",
     },
     "Thunderstorm": {
-        "damage": 32,
-        "manaCost": 45,
+        "damage": 38,
+        "manaCost": 32,
         "description": "Deals 32 damage.",
     },
     "Restoration Incantation": {
-        "healing": 24,
-        "manaCost": 35,
+        "healing": 35,
+        "manaCost": 25,
         "description": "Heals 24 health in battle.",
     },
     "Frost Nova": {
-        "damage": 18,
-        "manaCost": 38,
+        "damage": 24,
+        "manaCost": 28,
         "effects": {"stun": 1},
         "description": "Deals 18 damage and freezes the enemy for 1 turn.",
     },
     "Solar Beam": {
-        "damage": 45,
-        "manaCost": 65,
+        "damage": 55,
+        "manaCost": 45,
         "description": "Deals 45 damage.",
     },
     "Life Bloom": {
-        "healing": 45,
-        "manaCost": 55,
+        "healing": 55,
+        "manaCost": 40,
         "description": "Heals 45 health in battle.",
     },
     "Lockio Reducto": {
@@ -52,7 +52,7 @@ SPELLS = {
 
 FROG_ATTACKS = {
     "Tongue Slap": {
-        "damage": 8,
+        "damage": 10,
         "energyCost": 0,
         "description": "Free frog attack.",
     },
@@ -513,6 +513,51 @@ LONG_ROAD_ENEMIES = (
     "realmquake titan",
     "calendar dragon",
 )
+
+# Story balance is applied after the complete enemy list is built. Keeping the
+# overrides together makes the Python and HTML5 ports easy to compare.
+_STORY_BALANCE_OVERRIDES = {
+    "gate rat": {"health": 22, "damage": 5, "reward": 8},
+    "goblin": {"health": 30, "damage": 6, "reward": 9},
+    "troll": {"health": 46, "damage": 8, "reward": 12},
+    "smoke imp": {"health": 32, "damage": 7, "reward": 10},
+    "skeleton": {"health": 34, "damage": 8, "reward": 10},
+    "bramble wolf": {"health": 44, "damage": 8, "reward": 11},
+    "werewolf": {"health": 54, "damage": 9, "reward": 13},
+    "treasure mimic": {"health": 48, "damage": 9, "reward": 14},
+    "ogre": {"health": 68, "damage": 11, "reward": 16},
+    "witch": {"health": 58, "damage": 10, "reward": 15},
+    "curse candle": {"health": 40, "damage": 8, "reward": 11},
+    "ice goblin": {"health": 60, "damage": 10, "reward": 15},
+    "snow bat": {"health": 42, "damage": 8, "reward": 11},
+    "shadow knight": {"health": 76, "damage": 12, "reward": 18},
+    "receipt wraith": {"health": 52, "damage": 9, "reward": 13},
+    "vampire": {"health": 70, "damage": 12, "reward": 18},
+    "basement bat": {"health": 48, "damage": 9, "reward": 12},
+    "sugar golem": {"health": 86, "damage": 13, "reward": 20},
+    "rust rat": {"health": 54, "damage": 9, "reward": 13},
+    "glass cobra": {"health": 72, "damage": 12, "reward": 18},
+    "crystal dragon": {"health": 108, "damage": 14, "reward": 30},
+    "crown wraith": {"health": 88, "damage": 13, "reward": 24},
+    "lord dreadbiscuit": {"health": 120, "damage": 16, "reward": 35},
+    "realmbound dragon": {"health": 135, "damage": 14, "reward": 60},
+}
+for _monster_name, _stats in _STORY_BALANCE_OVERRIDES.items():
+    MONSTERS[_monster_name].update(_stats)
+
+# The Hundred-Day Road contains fifty mandatory battles. Its old numbers rose
+# to 280 health and 74 damage, which made completion mathematically unrealistic.
+# The new curve stays dangerous but every fight remains survivable even for a
+# player who missed an optional upgrade.
+for _index, _monster_name in enumerate(LONG_ROAD_ENEMIES, start=1):
+    MONSTERS[_monster_name].update(
+        health=48 + round(_index * 1.1),
+        damage=6 + (_index - 1) // 12,
+        reward=10 + (_index - 1) // 5,
+    )
+
+for _monster in MONSTERS.values():
+    _monster.setdefault("reward", max(8, min(30, round(_monster["health"] / 7))))
 
 
 LOOT_DROPS = [

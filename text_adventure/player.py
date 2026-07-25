@@ -12,16 +12,16 @@ from .ui import MenuOption, choose_menu, divider, money_text, stat_meter
 def create_player():
     """Create a normal starting character.
 
-    The player starts like a regular adventurer: no Whoop Nickels, no spells, basic
-    health, and enough mana to matter after learning magic.
+    The player starts with a small safety fund, one potion, sturdier health, and
+    enough mana to experiment after learning magic.
     """
     return {
         "name": "Adventurer",
-        "money": 0,
-        "health": 100,
-        "healthMax": 100,
-        "mana": 100,
-        "manaMax": 100,
+        "money": 20,
+        "health": 120,
+        "healthMax": 120,
+        "mana": 120,
+        "manaMax": 120,
         "armor": 0,
         "weaponDamage": 0,
         "extraDamage": 0,
@@ -30,7 +30,7 @@ def create_player():
         "frogEnergy": 0,
         "frogEnergyMax": 0,
         "roadProgress": 0,
-        "backpack": [],
+        "backpack": ["Small Health Potion"],
         "spells": [],
         "frogAttacks": [],
     }
@@ -101,7 +101,7 @@ def sell_scraps(player):
     sold_anything = False
     for item in player["backpack"][:]:
         if item in SELLABLE_LOOT:
-            worth = random.randint(5, 10)
+            worth = random.randint(8, 14)
             player["backpack"].remove(item)
             player["money"] += worth
             sold_anything = True
@@ -145,7 +145,7 @@ def offer_potions(player):
                     "2",
                     "Drink Small Health Potion",
                     "small",
-                    "+15 health",
+                    "+30 health",
                     aliases=("small", "small potion"),
                     enabled=small_count > 0,
                     status=f"x{small_count}" if small_count else "none",
@@ -167,7 +167,7 @@ def offer_potions(player):
             say(f"\nYour health is restored to {player['health']}.")
             break
         if choice == "small":
-            player["health"] = min(max_health, player["health"] + 15)
+            player["health"] = min(max_health, player["health"] + 30)
             player["backpack"].remove("Small Health Potion")
             say(f"\nYour health is now {player['health']}.")
             break
