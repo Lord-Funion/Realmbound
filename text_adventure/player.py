@@ -12,8 +12,8 @@ from .ui import MenuOption, choose_menu, divider, money_text, stat_meter
 def create_player():
     """Create a normal starting character.
 
-    The player starts like a regular adventurer: no Whoop Nickels, no spells, basic
-    health, and enough mana to matter after learning magic.
+    The player starts with a small safety fund, one potion, sturdier health, and
+    enough mana to experiment after learning magic.
     """
     return {
         "name": "Adventurer",

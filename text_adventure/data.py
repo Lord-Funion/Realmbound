@@ -540,7 +540,7 @@ _STORY_BALANCE_OVERRIDES = {
     "crystal dragon": {"health": 108, "damage": 14, "reward": 30},
     "crown wraith": {"health": 88, "damage": 13, "reward": 24},
     "lord dreadbiscuit": {"health": 120, "damage": 16, "reward": 35},
-    "realmbound dragon": {"health": 150, "damage": 18, "reward": 60},
+    "realmbound dragon": {"health": 135, "damage": 14, "reward": 60},
 }
 for _monster_name, _stats in _STORY_BALANCE_OVERRIDES.items():
     MONSTERS[_monster_name].update(_stats)

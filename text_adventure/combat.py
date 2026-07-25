@@ -287,7 +287,7 @@ def win_fight(monster_name, player):
     drop = random.choice(LOOT_DROPS)
     player["backpack"].append(drop)
 
-    health_gain = min(max(18, player["healthMax"] // 6), player["healthMax"] - player["health"])
+    health_gain = min(max(40, player["healthMax"] // 3), player["healthMax"] - player["health"])
     mana_gain = min(max(15, player["manaMax"] // 8), player["manaMax"] - player["mana"])
     player["health"] += max(0, health_gain)
     player["mana"] += max(0, mana_gain)

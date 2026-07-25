@@ -568,8 +568,8 @@
             <tr><td><code>scene</code></td><td class="optional">Recommended</td><td>Documents which scene the encounter belongs to. Actual placement is controlled by <code>after_scene</code>.</td></tr>
             <tr><td><code>user_added</code></td><td class="required">Required</td><td>Must be <code>true</code> so the generator preserves the custom encounter.</td></tr>
             <tr><td><code>type</code></td><td class="required">Required</td><td>Use <code>"battle"</code>, <code>"shop"</code>, <code>"church"</code>, <code>"sequence"</code>, <code>"choice"</code>, <code>"text"</code>, or <code>"reward"</code>.</td></tr>
-            <tr><td><code>enemy</code></td><td class="required">Required</td><td>The exact lowercase name of an enemy that already exists in the game's combat data.</td></tr>
-            <tr><td><code>intro</code></td><td class="optional">Optional</td><td>An array of text lines shown before the battle.</td></tr>
+            <tr><td><code>enemy</code></td><td class="optional">Battle only</td><td>The exact lowercase name of an enemy that already exists in the game's combat data.</td></tr>
+            <tr><td><code>intro</code></td><td class="optional">Optional</td><td>An array of text lines shown before any encounter or nested step.</td></tr>
             <tr><td><code>choice</code></td><td class="optional">Optional</td><td>Use <code>"fight_or_run"</code> to ask the player. Leave it out to start the battle immediately.</td></tr>
             <tr><td><code>run</code></td><td class="optional">Optional</td><td>Controls the result when the player runs. It can show text and optionally cause game over.</td></tr>
             <tr><td><code>victory.rewards</code></td><td class="optional">Optional</td><td>A list of item and money rewards granted after victory.</td></tr>

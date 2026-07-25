@@ -683,8 +683,8 @@
           "reward": 35
       },
       "realmbound dragon": {
-          "health": 150,
-          "damage": 18,
+          "health": 135,
+          "damage": 14,
           "reward": 60
       }
   };
@@ -3415,7 +3415,7 @@
       player.money += reward;
       const drop = randomChoice(LOOT_DROPS);
       player.backpack.push(drop);
-      const healthGain = Math.max(0, Math.min(Math.max(18, Math.floor(player.healthMax / 6)), player.healthMax - player.health));
+      const healthGain = Math.max(0, Math.min(Math.max(40, Math.floor(player.healthMax / 3)), player.healthMax - player.health));
       const manaGain = Math.max(0, Math.min(Math.max(15, Math.floor(player.manaMax / 8)), player.manaMax - player.mana));
       player.health += healthGain;
       player.mana += manaGain;
