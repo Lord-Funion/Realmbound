@@ -31,29 +31,32 @@ jobs:
       - name: Apply upgrade
         run: |
           set +e
-          python tools/_apply_upgrade.py > upgrade-error.txt 2>&1
-          status=$?
-
-          if [ $status -ne 0 ] && grep -q "SyntaxError: '(' was never closed" upgrade-error.txt && grep -q "text_adventure/data.py" upgrade-error.txt; then
-            python - <<'PY' >> upgrade-error.txt 2>&1
+          python - <<'PY' > upgrade-error.txt 2>&1
+          import base64
+          import re
+          import zlib
           from pathlib import Path
-          path = Path("text_adventure/data.py")
-          text = path.read_text(encoding="utf-8")
-          marker = "\n# Story balance is applied after the complete enemy list is built."
-          if "\n)\n\n# Story balance is applied" not in text:
-              if marker not in text:
-                  raise SystemExit("Could not find the known road-tuple repair marker.")
-              text = text.replace(marker, "\n)\n\n# Story balance is applied after the complete enemy list is built.", 1)
-              path.write_text(text, encoding="utf-8")
+
+          wrapper = Path("tools/_apply_upgrade.py").read_text(encoding="utf-8")
+          match = re.search(r"b64decode\('([^']+)'\)", wrapper)
+          if not match:
+              raise SystemExit("Could not read the temporary upgrade payload.")
+
+          source = zlib.decompress(base64.b64decode(match.group(1))).decode("utf-8")
+          source = source.replace(
+              "updated, count = re.subn(pattern, replacement, text, count=1, flags=flags)",
+              "updated, count = re.subn(pattern, lambda _match: replacement, text, count=1, flags=flags)",
+              1,
+          )
+          source = source.replace(
+              "block = '''\n\n# Story balance is applied after the complete enemy list is built.",
+              "block = ''')\n\n# Story balance is applied after the complete enemy list is built.",
+              1,
+          )
+          exec(compile(source, "tools/_apply_upgrade.py", "exec"), {"__name__": "__main__"})
           PY
-            repair_status=$?
-            if [ $repair_status -eq 0 ]; then
-              python tools/make_encounters.py >> upgrade-error.txt 2>&1
-              status=$?
-            else
-              status=$repair_status
-            fi
-          fi
+          status=$?
+          set -e
 
           cat upgrade-error.txt
           if [ $status -ne 0 ]; then
