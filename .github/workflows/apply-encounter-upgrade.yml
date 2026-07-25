@@ -50,8 +50,8 @@ jobs:
               1,
           )
           source = source.replace(
-              "block = '''\n\n# Story balance is applied after the complete enemy list is built.",
-              "block = ''')\n\n# Story balance is applied after the complete enemy list is built.",
+              "block = '''\\n\\n# Story balance is applied after the complete enemy list is built.",
+              "block = ''')\\n\\n# Story balance is applied after the complete enemy list is built.",
               1,
           )
           exec(
