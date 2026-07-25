@@ -1,5 +1,6 @@
 name: Build readable encounters
 
+# This branch change deliberately starts the pull-request build.
 on:
   push:
     branches: [main]
