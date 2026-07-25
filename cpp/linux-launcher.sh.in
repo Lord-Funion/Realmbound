@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+set -u
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+BIN="$SCRIPT_DIR/Adventure-Game"
+
+if [ ! -x "$BIN" ]; then
+    printf 'Adventure Game binary was not found at:\n%s\n' "$BIN" >&2
+    exit 1
+fi
+
+if [ -t 0 ] && [ -t 1 ]; then
+    cd "$SCRIPT_DIR" || exit 1
+    exec "$BIN"
+fi
+
+GAME_COMMAND='cd "$1" || exit 1; ./Adventure-Game; status=$?; printf "\nPress Enter to close..."; IFS= read -r _; exit "$status"'
+
+for TERMINAL in x-terminal-emulator gnome-terminal konsole kitty alacritty xterm lxterminal xfce4-terminal mate-terminal; do
+    if ! command -v "$TERMINAL" >/dev/null 2>&1; then
+        continue
+    fi
+
+    case "$TERMINAL" in
+        gnome-terminal)
+            exec "$TERMINAL" -- sh -c "$GAME_COMMAND" sh "$SCRIPT_DIR"
+            ;;
+        konsole)
+            exec "$TERMINAL" --workdir "$SCRIPT_DIR" -e sh -c "$GAME_COMMAND" sh "$SCRIPT_DIR"
+            ;;
+        kitty)
+            exec "$TERMINAL" --directory "$SCRIPT_DIR" sh -c "$GAME_COMMAND" sh "$SCRIPT_DIR"
+            ;;
+        xfce4-terminal|mate-terminal)
+            exec "$TERMINAL" --working-directory="$SCRIPT_DIR" -e "sh -c '$GAME_COMMAND' sh '$SCRIPT_DIR'"
+            ;;
+        *)
+            exec "$TERMINAL" -e sh -c "$GAME_COMMAND" sh "$SCRIPT_DIR"
+            ;;
+    esac
+done
+
+printf 'No terminal emulator was found. Open a terminal and run:\n%s\n' "$BIN" >&2
+exit 1

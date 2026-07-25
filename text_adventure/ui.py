@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from .pacing import ask as typed_ask
+from .pacing import maybe_open_quick_menu
 from .pacing import say
 from .terminal_colors import Fore, Style
 
@@ -431,7 +432,10 @@ def choose_menu(title, options, prompt="Choose: ", subtitle=None, invalid=None):
             if current_row is not None:
                 current_row += rows_used
 
-        choice = normalize_choice(_read_clickable(prompt, option_targets))
+        raw_choice = _read_clickable(prompt, option_targets)
+        if maybe_open_quick_menu(raw_choice):
+            continue
+        choice = normalize_choice(raw_choice)
         for option in options:
             if choice in _option_inputs(option):
                 if option.enabled:
@@ -451,7 +455,10 @@ def ask_choice(prompt, choices, invalid):
     click_choices = [(value, value) for value in choices]
 
     while True:
-        choice = normalize_choice(_read_clickable(prompt, inline_choices=click_choices))
+        raw_choice = _read_clickable(prompt, inline_choices=click_choices)
+        if maybe_open_quick_menu(raw_choice):
+            continue
+        choice = normalize_choice(raw_choice)
         for value, aliases in normalized_choices.items():
             if choice in aliases:
                 return value
@@ -460,4 +467,5 @@ def ask_choice(prompt, choices, invalid):
 
 def money_text(amount):
     """Format money consistently across menus."""
-    return f"{Fore.LIGHTYELLOW_EX}${amount}{Style.RESET_ALL}"
+    label = "Whoop Nickel" if amount == 1 else "Whoop Nickels"
+    return f"{Fore.LIGHTYELLOW_EX}{amount} {label}{Style.RESET_ALL}"

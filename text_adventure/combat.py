@@ -2,15 +2,14 @@
 
 import random
 
-from .data import LOOT_DROPS, MONSTERS, SPELLS
+from .data import FROG_ATTACKS, LOOT_DROPS, MONSTERS, SPELLS
 from .pacing import say
-from .player import print_stats
 from .terminal_colors import Fore, Style
-from .ui import MenuOption, choose_menu, stat_meter
+from .ui import MenuOption, choose_menu, money_text, stat_meter
 
 
-BASIC_DAMAGE = 5
-STATUS_DAMAGE = 3
+BASE_BASIC_DAMAGE = 4
+STATUS_DAMAGE = 5
 
 
 class GameOver(Exception):
@@ -38,6 +37,22 @@ def _monster_attack(monster_name, monster, player):
     return 0
 
 
+def _basic_damage(player):
+    return BASE_BASIC_DAMAGE + player.get("weaponDamage", 0)
+
+
+def _try_combat_revive(player):
+    if "Phoenix Feather" not in player["backpack"]:
+        return False
+    player["backpack"].remove("Phoenix Feather")
+    player["health"] = max(1, player["healthMax"] // 2)
+    say(
+        "\nThe Phoenix Feather bursts into warm sparks and pulls you back to "
+        f"{player['health']}/{player['healthMax']} health!"
+    )
+    return True
+
+
 def _spell_detail(player, spell):
     """Build a concise combat menu description for one spell."""
     mana_cost = spell.get("manaCost", 0)
@@ -59,6 +74,7 @@ def _spell_detail(player, spell):
 
 def _choose_combat_action(monster_name, monster_health, monster_max_health, player):
     """Show the combat menu and return either 'basic' or a spell name."""
+    basic_damage = _basic_damage(player)
     subtitle = (
         f"You: {Fore.RED}{stat_meter(player['health'], player['healthMax'])} "
         f"{player['health']}/{player['healthMax']}{Style.RESET_ALL} | "
@@ -71,12 +87,42 @@ def _choose_combat_action(monster_name, monster_health, monster_max_health, play
             "1",
             "Basic Attack",
             "basic",
-            f"free, {BASIC_DAMAGE} damage",
+            f"free, {basic_damage} damage",
             aliases=("basic", "attack", "hit", "punch"),
         )
     ]
 
     next_key = 2
+    if player.get("frogMode"):
+        for attack_name in player.get("frogAttacks", []):
+            attack = FROG_ATTACKS.get(attack_name, {})
+            energy_cost = attack.get("energyCost", 0)
+            enabled = player.get("frogEnergy", 0) >= energy_cost
+            status = ""
+            if not enabled:
+                status = f"need {energy_cost - player.get('frogEnergy', 0)} frog energy"
+            elif "healing" in attack and player["health"] >= player["healthMax"]:
+                enabled = False
+                status = "health full"
+            detail_parts = []
+            if "damage" in attack:
+                detail_parts.append(f"{attack['damage'] + player.get('frogPower', 0)} damage")
+            if "healing" in attack:
+                detail_parts.append(f"heal {attack['healing']}")
+            detail_parts.append(f"{energy_cost} frog energy")
+            options.append(
+                MenuOption(
+                    str(next_key),
+                    attack_name,
+                    f"frog:{attack_name}",
+                    ", ".join(detail_parts),
+                    aliases=(attack_name,),
+                    enabled=enabled,
+                    status=status,
+                )
+            )
+            next_key += 1
+
     for spell_name in player["spells"]:
         spell = SPELLS.get(spell_name, {})
         if "damage" not in spell and "healing" not in spell:
@@ -134,7 +180,7 @@ def spell_fight(monster_name, player):
                 f"The poison burns you for {STATUS_DAMAGE} damage. "
                 f"Health: {player['health']}/{player['healthMax']}"
             )
-            if player["health"] <= 0:
+            if player["health"] <= 0 and not _try_combat_revive(player):
                 game_over(player)
 
         if burn_turns > 0:
@@ -152,8 +198,36 @@ def spell_fight(monster_name, player):
         action = _choose_combat_action(monster_name, monster_health, monster_max_health, player)
 
         if action == "basic":
-            monster_health -= BASIC_DAMAGE
-            say(f"You strike for {BASIC_DAMAGE} damage.", "quick")
+            damage = _basic_damage(player)
+            monster_health -= damage
+            say(f"You strike for {damage} damage.", "quick")
+            if player["mana"] < player["manaMax"]:
+                recovered = min(3, player["manaMax"] - player["mana"])
+                player["mana"] += recovered
+                say(f"You steady your breathing and recover {recovered} mana.", "quick")
+        elif action.startswith("frog:"):
+            attack_name = action.split(":", 1)[1]
+            attack = FROG_ATTACKS[attack_name]
+            energy_cost = attack.get("energyCost", 0)
+            player["frogEnergy"] -= energy_cost
+            say(f"The frog uses {attack_name}.", "quick")
+
+            if "damage" in attack:
+                damage = attack["damage"] + player.get("frogPower", 0)
+                monster_health -= damage
+                say(f"It deals {damage} damage.")
+                effects = attack.get("effects", {})
+                if "burn" in effects:
+                    burn_turns = max(burn_turns, effects["burn"])
+                    say(f"The target bubbles for {burn_turns} turns.", "quick")
+                if "stun" in effects:
+                    stun_turns = max(stun_turns, effects["stun"])
+                    say(f"The {monster_name} is stunned for {stun_turns} turns.", "quick")
+            else:
+                heal_amount = min(player["healthMax"] - player["health"], attack["healing"])
+                heal_amount = max(0, heal_amount)
+                player["health"] += heal_amount
+                say(f"The frog heals you for {heal_amount} health.", "quick")
         else:
             spell_name = action
             spell = SPELLS[spell_name]
@@ -193,7 +267,7 @@ def spell_fight(monster_name, player):
         else:
             poison_ticks = max(poison_ticks, _monster_attack(monster_name, monster, player))
 
-        if player["health"] <= 0:
+        if player["health"] <= 0 and not _try_combat_revive(player):
             game_over(player)
 
         say(
@@ -205,18 +279,19 @@ def spell_fight(monster_name, player):
 
 
 def win_fight(monster_name, player):
-    """Give the player rewards and reset mana after a victory."""
+    """Give the player rewards after a victory."""
     say(f"The {monster_name} has been defeated!", "beat")
-    player["money"] += 10
+    reward = random.randint(4, 9)
+    player["money"] += reward
     drop = random.choice(LOOT_DROPS)
     player["backpack"].append(drop)
-    player["mana"] = player["manaMax"]
-    say(f"You gained ${10} and found a {drop}.")
-    print_stats(player)
+    if player.get("frogMode"):
+        player["frogEnergy"] = min(player["frogEnergyMax"], player["frogEnergy"] + 4)
+    say(f"You gained {money_text(reward)} and found a {drop}.")
 
 
 def game_over(player):
     """Stop the program when the player dies."""
     say("You have been defeated!", "beat")
-    print(f"GAME OVER\nYou had {Fore.YELLOW}${player['money']}{Style.RESET_ALL}.")
+    print(f"GAME OVER\nYou had {money_text(player['money'])}.")
     raise GameOver()

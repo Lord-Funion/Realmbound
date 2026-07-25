@@ -503,6 +503,12 @@
       damage: 74,
       attacks: ["lost month", "deadline flame", "year-end wing"],
     },
+    "realmbound dragon": {
+      health: 150,
+      damage: 31,
+      reward: 90,
+      attacks: ["starfire breath", "crownquake", "eclipse wingstorm", "ancient claw"],
+    },
   };
 
   const LONG_ROAD_ENEMIES = [

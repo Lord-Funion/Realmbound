@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Realmbound
+Comment=Play the Realmbound C++ console port
+Exec=@LINUX_LAUNCHER@
+Icon=utilities-terminal
+Terminal=false
+Categories=Game;

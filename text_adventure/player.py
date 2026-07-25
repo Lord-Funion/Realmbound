@@ -12,19 +12,27 @@ from .ui import MenuOption, choose_menu, divider, money_text, stat_meter
 def create_player():
     """Create a normal starting character.
 
-    The player starts like a regular adventurer: no gold, no spells, basic
+    The player starts like a regular adventurer: no Whoop Nickels, no spells, basic
     health, and enough mana to matter after learning magic.
     """
     return {
+        "name": "Adventurer",
         "money": 0,
         "health": 100,
         "healthMax": 100,
-        "mana": 50,
-        "manaMax": 50,
+        "mana": 100,
+        "manaMax": 100,
         "armor": 0,
+        "weaponDamage": 0,
         "extraDamage": 0,
+        "frogMode": False,
+        "frogPower": 0,
+        "frogEnergy": 0,
+        "frogEnergyMax": 0,
+        "roadProgress": 0,
         "backpack": [],
         "spells": [],
+        "frogAttacks": [],
     }
 
 
@@ -34,10 +42,26 @@ def add_spell(player, spell_name):
         player["spells"].append(spell_name)
 
 
+def add_frog_attack(player, attack_name):
+    """Teach the frog route a combat trick once."""
+    player.setdefault("frogAttacks", [])
+    if attack_name not in player["frogAttacks"]:
+        player["frogAttacks"].append(attack_name)
+
+
+def activate_frog_partner(player):
+    """Switch the player into the frog companion route."""
+    player["frogMode"] = True
+    player["frogPower"] = max(player.get("frogPower", 0), 4)
+    player["frogEnergyMax"] = max(player.get("frogEnergyMax", 0), 25)
+    player["frogEnergy"] = max(player.get("frogEnergy", 0), player["frogEnergyMax"])
+    add_frog_attack(player, "Tongue Slap")
+
+
 def print_stats(player):
     """Show the current player state in a compact, readable format."""
     divider("Player Stats")
-    print(f"Money: {money_text(player['money'])}")
+    print(f"Whoop Nickels: {money_text(player['money'])}")
     print(
         f"Health: {Fore.RED}{stat_meter(player['health'], player['healthMax'])} "
         f"{player['health']}/{player['healthMax']}{Style.RESET_ALL}"
@@ -48,9 +72,18 @@ def print_stats(player):
     )
     print(f"Armor: {Fore.LIGHTCYAN_EX}{player['armor']}{Style.RESET_ALL}")
     print(f"Spell Damage: {Fore.LIGHTMAGENTA_EX}+{player['extraDamage']}{Style.RESET_ALL}")
+    if player.get("weaponDamage"):
+        print(f"Weapon Damage: {Fore.LIGHTMAGENTA_EX}+{player['weaponDamage']}{Style.RESET_ALL}")
 
     spells = ", ".join(player["spells"]) if player["spells"] else "None"
     print(f"Spells: {Fore.MAGENTA}{spells}{Style.RESET_ALL}")
+    if player.get("frogMode"):
+        frog_attacks = ", ".join(player.get("frogAttacks", [])) or "None"
+        print(
+            f"Frog Energy: {Fore.GREEN}{stat_meter(player['frogEnergy'], player['frogEnergyMax'])} "
+            f"{player['frogEnergy']}/{player['frogEnergyMax']}{Style.RESET_ALL}"
+        )
+        print(f"Frog Attacks: {Fore.GREEN}{frog_attacks}{Style.RESET_ALL}")
 
     if player["backpack"]:
         item_counts = Counter(player["backpack"])
@@ -72,7 +105,7 @@ def sell_scraps(player):
             player["backpack"].remove(item)
             player["money"] += worth
             sold_anything = True
-            say(f"\nYou sold a(n) {item} for ${worth}.", "quick")
+            say(f"\nYou sold a(n) {item} for {money_text(worth)}.", "quick")
     return sold_anything
 
 
@@ -142,5 +175,4 @@ def offer_potions(player):
             say("\nYou save your potions for later.", "quick")
             return False
 
-    print_stats(player)
     return True
