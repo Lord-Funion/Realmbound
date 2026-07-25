@@ -45,7 +45,7 @@
   "ports": {
     "python": {
       "branch": "main",
-      "source_ref": "agent/shared-story-source",
+      "source_ref": "main",
       "path": "text_adventure/story.py",
       "blob_sha": "e2e0334e61390135a9e983e57f53a2ace0d3c801",
       "source_lines": [
@@ -1616,7 +1616,7 @@
     },
     "web": {
       "branch": "main",
-      "source_ref": "agent/shared-story-source",
+      "source_ref": "main",
       "path": "web/app.js",
       "blob_sha": "0668cbe460ccafaf6342ad0588960d254c19a690",
       "source_lines": [
