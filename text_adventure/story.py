@@ -11,6 +11,7 @@ from pathlib import Path
 from . import cloud_saves
 from .combat import GameOver, game_over, spell_fight
 from .data import LONG_ROAD_ENEMIES
+from .encounter_data import additions, encounter
 from .logo import show_startup_logo
 from .pacing import ask, say, set_autosave_hook, set_quick_menu_hook
 from .player import activate_frog_partner, add_frog_attack, add_spell, create_player, offer_potions, print_stats
@@ -687,6 +688,26 @@ def _run_scene(scene_id, player, shop_stock):
         final_battle_scene(player)
     else:
         raise SaveError("Unknown story checkpoint.")
+
+    for encounter_id in additions(scene_id):
+        _run_json_encounter(encounter_id, player)
+
+
+def _run_json_encounter(encounter_id, player):
+    entry = encounter(encounter_id)
+    for line in entry.get("intro", []): say("\n" + line, "beat")
+    if entry.get("type") == "battle":
+        if entry.get("choice") == "fight_or_run" and fight_or_run() == "run":
+            result = entry.get("run", {})
+            if result.get("text"): say("\n" + result["text"], "beat")
+            if result.get("game_over"): game_over(player)
+            return
+        spell_fight(entry["enemy"], player)
+    for reward in entry.get("victory", {}).get("rewards", []):
+        if "item" in reward: player["backpack"].append(reward["item"])
+        if "money" in reward:
+            value=reward["money"]; amount=random.randint(value["min"],value["max"]) if isinstance(value,dict) else int(value); player["money"]+=amount
+    if entry.get("victory", {}).get("offer_potions"): offer_potions(player)
 
 
 def _extra_fight(player, monster_name, intro, run_text):

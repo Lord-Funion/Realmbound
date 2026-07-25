@@ -10,6 +10,8 @@
   const STATUS_DAMAGE = 5;
   const OUTPUT_DELAY_MS = 280;
   const FINISHED_SCENE = "finished";
+  let ENCOUNTER_DATA = null;
+  async function loadEncounterData() { const r=await fetch("story/encounters.json",{cache:"no-store"}); if(!r.ok) throw new Error(`Encounter data ${r.status}`); ENCOUNTER_DATA=await r.json(); }
   const SCENE_ORDER = [
     "intro",
     "wizard",
@@ -1976,6 +1978,31 @@
       } else {
         throw new Error("Unknown story checkpoint.");
       }
+
+      await this.runSceneAdditions(sceneId, player);
+    }
+
+    async runJsonEncounter(encounterId, player) {
+      const entry = ENCOUNTER_DATA.data_encounters[encounterId];
+      if (!entry) throw new Error(`Unknown encounter: ${encounterId}`);
+      for (const line of entry.intro || []) this.say(`\n${line}`);
+      if (entry.type === "battle") {
+        if (entry.choice === "fight_or_run" && await this.fightOrRun() === "run") {
+          if (entry.run && entry.run.text) this.say(`\n${entry.run.text}`);
+          if (entry.run && entry.run.game_over) this.gameOver(player);
+          return;
+        }
+        await this.spellFight(entry.enemy, player);
+      }
+      for (const reward of ((entry.victory || {}).rewards || [])) {
+        if (reward.item) player.backpack.push(reward.item);
+        if (reward.money !== undefined) { const v=reward.money; player.money += typeof v === "object" ? randomInt(v.min,v.max) : Number(v); }
+      }
+      if ((entry.victory || {}).offer_potions) await this.offerPotions(player);
+    }
+
+    async runSceneAdditions(sceneId, player) {
+      for (const id of (ENCOUNTER_DATA.scenes[sceneId].after_scene || [])) await this.runJsonEncounter(id, player);
     }
 
     async extraFight(player, monsterName, intro, runText) {
@@ -3777,12 +3804,13 @@
     }
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("DOMContentLoaded", async () => {
     const terminal = new Terminal(
       document.getElementById("terminal"),
       document.getElementById("terminal-output"),
     );
+    await loadEncounterData();
     const game = new AdventureGame(terminal);
-    game.start();
+    await game.start();
   });
 })();
