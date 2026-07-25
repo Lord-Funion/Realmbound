@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Replace the source dump with readable Realmbound encounter data."""
 from __future__ import annotations
-import ast, json
+import ast, json, re
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
